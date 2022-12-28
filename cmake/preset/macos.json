@@ -1,0 +1,70 @@
+{
+    "version": 5,
+    "include": [
+        "base.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "macos",
+            "inherits": [
+                "base",
+                "host-macos",
+                "xcode"
+            ]
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "macos-debug",
+            "inherits": [
+                "host-macos",
+                "debug"
+            ],
+            "configurePreset": "macos"
+        },
+        {
+            "name": "macos-debug-clean",
+            "inherits": [
+                "host-macos",
+                "debug",
+                "clean"
+            ],
+            "configurePreset": "macos"
+        },
+        {
+            "name": "macos-debug-install",
+            "inherits": [
+                "host-macos",
+                "debug",
+                "install"
+            ],
+            "configurePreset": "macos"
+        },
+        {
+            "name": "macos-release",
+            "inherits": [
+                "host-macos",
+                "release"
+            ],
+            "configurePreset": "macos"
+        },
+        {
+            "name": "macos-release-clean",
+            "inherits": [
+                "host-macos",
+                "release",
+                "clean"
+            ],
+            "configurePreset": "macos"
+        },
+        {
+            "name": "macos-release-install",
+            "inherits": [
+                "host-macos",
+                "release",
+                "install"
+            ],
+            "configurePreset": "macos"
+        }
+    ]
+}

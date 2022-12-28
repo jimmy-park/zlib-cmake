@@ -1,0 +1,70 @@
+{
+    "version": 5,
+    "include": [
+        "base.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "linux",
+            "inherits": [
+                "base",
+                "host-linux",
+                "ninja"
+            ]
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "linux-debug",
+            "inherits": [
+                "host-linux",
+                "debug"
+            ],
+            "configurePreset": "linux"
+        },
+        {
+            "name": "linux-debug-clean",
+            "inherits": [
+                "host-linux",
+                "debug",
+                "clean"
+            ],
+            "configurePreset": "linux"
+        },
+        {
+            "name": "linux-debug-install",
+            "inherits": [
+                "host-linux",
+                "debug",
+                "install"
+            ],
+            "configurePreset": "linux"
+        },
+        {
+            "name": "linux-release",
+            "inherits": [
+                "host-linux",
+                "release"
+            ],
+            "configurePreset": "linux"
+        },
+        {
+            "name": "linux-release-clean",
+            "inherits": [
+                "host-linux",
+                "release",
+                "clean"
+            ],
+            "configurePreset": "linux"
+        },
+        {
+            "name": "linux-release-install",
+            "inherits": [
+                "host-linux",
+                "release",
+                "install"
+            ],
+            "configurePreset": "linux"
+        }
+    ]
+}
