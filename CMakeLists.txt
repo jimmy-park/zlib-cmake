@@ -12,6 +12,9 @@ include(FetchContent)
 include(GNUInstallDirs)
 include(cmake/GetCPM.cmake)
 
+# Override hint variable to select the type of library
+option(ZLIB_USE_STATIC_LIBS "Build zlib a static library" OFF)
+
 CPMAddPackage(
     NAME zlib-source
     DOWNLOAD_ONLY ON
@@ -95,6 +98,11 @@ file(GENERATE OUTPUT output.log CONTENT "$<TARGET_FILE_NAME:zlib>")
 set(ZLIB_INCLUDE_DIRS ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR} CACHE STRING "Override FindZLIB variables" FORCE)
 set(ZLIB_LIBRARIES "" CACHE STRING "Override FindZLIB variables" FORCE)
 set(ZLIB_FOUND ON CACHE BOOL "Override FindZLIB variables" FORCE)
+set(ZLIB_VERSION_STRING 1.2.13 CACHE STRING "Override FindZLIB variables" FORCE)
+set(ZLIB_VERSION_MAJOR 1 CACHE STRING "Override FindZLIB variables" FORCE)
+set(ZLIB_VERSION_MINOR 2 CACHE STRING "Override FindZLIB variables" FORCE)
+set(ZLIB_VERSION_PATCH 13 CACHE STRING "Override FindZLIB variables" FORCE)
+set(ZLIB_VERSION_TWEAK "" CACHE STRING "Override FindZLIB variables" FORCE)
 
 if(PROJECT_IS_TOP_LEVEL)
     add_subdirectory(apps)
