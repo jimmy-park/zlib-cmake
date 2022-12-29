@@ -12,18 +12,33 @@ include(FetchContent)
 include(GNUInstallDirs)
 include(cmake/GetCPM.cmake)
 
+# Information of latest zlib release
+set(ZLIB_LATEST_VERSION 1.2.13 CACHE INTERNAL "zlib version of latest release")
+set(ZLIB_LATEST_SHA256 1525952a0a567581792613a9723333d7f8cc20b87a81f920fb8bc7e3f2251428 CACHE INTERNAL "Hash of archived zlib release")
+
 # Override hint variable to select the type of library
 option(ZLIB_USE_STATIC_LIBS "Build zlib a static library" OFF)
 
+# Download zlib source
 CPMAddPackage(
     NAME zlib-source
     DOWNLOAD_ONLY ON
-    URL https://github.com/madler/zlib/archive/v1.2.13.tar.gz
-    URL_HASH SHA256=1525952a0a567581792613a9723333d7f8cc20b87a81f920fb8bc7e3f2251428
+    URL https://github.com/madler/zlib/archive/v${ZLIB_LATEST_VERSION}.tar.gz
+    URL_HASH SHA256=${ZLIB_LATEST_SHA256}
 )
-file(REMOVE ${zlib-source_SOURCE_DIR}/CMakeLists.txt)
-configure_file(${zlib-source_SOURCE_DIR}/zconf.h.cmakein ${zlib-source_BINARY_DIR}/zconf.h @ONLY)
 
+# Modify zlib source
+file(REMOVE
+    ${zlib-source_SOURCE_DIR}/CMakeLists.txt
+    ${zlib-source_SOURCE_DIR}/zconf.h
+)
+configure_file(
+    ${zlib-source_SOURCE_DIR}/zconf.h.cmakein
+    ${zlib-source_BINARY_DIR}/zconf.h
+    @ONLY
+)
+
+# Override find_package(ZLIB)
 FetchContent_Declare(
     ZLIB
     SOURCE_DIR ${zlib-source_SOURCE_DIR}
@@ -32,7 +47,20 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(ZLIB)
 
-set(CMAKE_CURRENT_BINARY_DIR ${zlib_BINARY_DIR})
+set(ZLIB_INCLUDE_DIRS ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR} CACHE STRING "Override FindZLIB variables" FORCE)
+set(ZLIB_LIBRARIES "" CACHE STRING "Override FindZLIB variables" FORCE)
+set(ZLIB_FOUND ON CACHE BOOL "Override FindZLIB variables" FORCE)
+
+string(REPLACE "." ";" ZLIB_LATEST_VERSION_LIST ${ZLIB_LATEST_VERSION})
+list(GET ZLIB_LATEST_VERSION_LIST 0 ZLIB_LATEST_VERSION_MAJOR)
+list(GET ZLIB_LATEST_VERSION_LIST 1 ZLIB_LATEST_VERSION_MINOR)
+list(GET ZLIB_LATEST_VERSION_LIST 2 ZLIB_LATEST_VERSION_PATCH)
+
+set(ZLIB_VERSION_STRING ${ZLIB_LATEST_VERSION} CACHE STRING "Override FindZLIB variables" FORCE)
+set(ZLIB_VERSION_MAJOR ${ZLIB_LATEST_VERSION_MAJOR} CACHE STRING "Override FindZLIB variables" FORCE)
+set(ZLIB_VERSION_MINOR ${ZLIB_LATEST_VERSION_MINOR} CACHE STRING "Override FindZLIB variables" FORCE)
+set(ZLIB_VERSION_PATCH ${ZLIB_LATEST_VERSION_PATCH} CACHE STRING "Override FindZLIB variables" FORCE)
+set(ZLIB_VERSION_TWEAK "" CACHE STRING "Override FindZLIB variables" FORCE)
 
 set(ZLIB_HEADERS
     ${zlib_BINARY_DIR}/zconf.h
@@ -75,7 +103,7 @@ add_library(zlib ${ZLIB_LIBRARY_TYPE} ${ZLIB_SOURCES})
 add_library(ZLIB::ZLIB ALIAS zlib)
 target_sources(zlib PUBLIC
     FILE_SET HEADERS
-    BASE_DIRS ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR}
+    BASE_DIRS ${ZLIB_INCLUDE_DIRS}
     FILES ${ZLIB_HEADERS}
 )
 set_target_properties(zlib PROPERTIES
@@ -87,22 +115,21 @@ set_target_properties(zlib PROPERTIES
     PDB_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
     RUNTIME_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
 )
+
+# Install zlib
 install(
     TARGETS zlib
     FILE_SET HEADERS
 )
-
-file(GENERATE OUTPUT output.log CONTENT "$<TARGET_FILE_NAME:zlib>")
-
-# Provide result variables of FindZLIB module
-set(ZLIB_INCLUDE_DIRS ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR} CACHE STRING "Override FindZLIB variables" FORCE)
-set(ZLIB_LIBRARIES "" CACHE STRING "Override FindZLIB variables" FORCE)
-set(ZLIB_FOUND ON CACHE BOOL "Override FindZLIB variables" FORCE)
-set(ZLIB_VERSION_STRING 1.2.13 CACHE STRING "Override FindZLIB variables" FORCE)
-set(ZLIB_VERSION_MAJOR 1 CACHE STRING "Override FindZLIB variables" FORCE)
-set(ZLIB_VERSION_MINOR 2 CACHE STRING "Override FindZLIB variables" FORCE)
-set(ZLIB_VERSION_PATCH 13 CACHE STRING "Override FindZLIB variables" FORCE)
-set(ZLIB_VERSION_TWEAK "" CACHE STRING "Override FindZLIB variables" FORCE)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/zlib.pc.in
+    ${zlib_BINARY_DIR}/zlib.pc
+    @ONLY
+)
+install(
+    FILES ${zlib_BINARY_DIR}/zlib.pc
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+)
 
 if(PROJECT_IS_TOP_LEVEL)
     add_subdirectory(apps)
