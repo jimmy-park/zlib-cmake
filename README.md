@@ -8,9 +8,10 @@ Build zlib using modern CMake and override the `FindZLIB` module
 
 ## Configure Options
 
-| Option                        | Type      | Default       | Description                                |
-| ---                           | ---       | ---           | ---                                        |
-| `ZLIB_USE_STATIC_LIBS`        | bool      | `OFF`         | Build zlib as a static library             |
+| Option                        | Type      | Default       | Description                                       |
+| ---                           | ---       | ---           | ---                                               |
+| `ZLIB_ENABLE_LFS`             | bool      | `OFF`         | Enable Large-File Support (LFS) on 32-bit system  |
+| `ZLIB_USE_STATIC_LIBS`        | bool      | `OFF`         | Build zlib as a static library                    |
 
 ### Notes
 
@@ -35,8 +36,8 @@ cmake --list-presets all
 cmake --preset windows
 
 # Use a build preset
-# <configure-preset>-[clean|install]
-cmake --build --preset windows
+# <configure-preset>-<debug|release>[-clean|install]
+cmake --build --preset windows-release
 ```
 
 ### Integration
@@ -52,7 +53,7 @@ FetchContent_Declare(
     URL https://github.com/jimmy-park/zlib-cmake/archive/main.zip
 )
 
-# This line must be preceded before find_package(ZLIB REQUIRED)
+# This line must be preceded before find_package(ZLIB)
 FetchContent_MakeAvailable(zlib-cmake)
 
 # Use same target as FindZLIB module

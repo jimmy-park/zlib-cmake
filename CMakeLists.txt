@@ -16,8 +16,9 @@ include(cmake/GetCPM.cmake)
 set(ZLIB_LATEST_VERSION 1.2.13 CACHE INTERNAL "zlib version of latest release")
 set(ZLIB_LATEST_SHA256 1525952a0a567581792613a9723333d7f8cc20b87a81f920fb8bc7e3f2251428 CACHE INTERNAL "Hash of archived zlib release")
 
-# Override hint variable to select the type of library
-option(ZLIB_USE_STATIC_LIBS "Build zlib a static library" OFF)
+# Custom options
+option(ZLIB_ENABLE_LFS "Enable Large-File Support (LFS) on 32-bit system" OFF)
+option(ZLIB_USE_STATIC_LIBS "Build zlib a static library" OFF) # Use the same name as FindZLIB module's hint variable
 
 # Download zlib source
 CPMAddPackage(
@@ -115,6 +116,13 @@ set_target_properties(zlib PROPERTIES
     PDB_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
     RUNTIME_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
 )
+
+if(ZLIB_ENABLE_LFS)
+    target_compile_definitions(zlib PUBLIC
+        _LARGEFILE64_SOURCE
+        _FILE_OFFSET_BITS=64
+    )
+endif()
 
 # Install zlib
 install(
