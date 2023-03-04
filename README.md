@@ -11,6 +11,7 @@ Build zlib using modern CMake and override the `FindZLIB` module
 | Option                        | Type      | Default       | Description                                       |
 | ---                           | ---       | ---           | ---                                               |
 | `ZLIB_ENABLE_LFS`             | bool      | `OFF`         | Enable Large-File Support (LFS) on 32-bit system  |
+| `ZLIB_INSTALL`                | bool      | `OFF`         | Install zlib and CMake targets                    |
 | `ZLIB_USE_STATIC_LIBS`        | bool      | `OFF`         | Build zlib as a static library                    |
 
 ### Notes
