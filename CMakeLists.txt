@@ -9,7 +9,6 @@ project(
 )
 
 include(FetchContent)
-include(GNUInstallDirs)
 include(cmake/GetCPM.cmake)
 
 # Information of latest zlib release
@@ -18,6 +17,7 @@ set(ZLIB_LATEST_SHA256 1525952a0a567581792613a9723333d7f8cc20b87a81f920fb8bc7e3f
 
 # Custom options
 option(ZLIB_ENABLE_LFS "Enable Large-File Support (LFS) on 32-bit system" OFF)
+option(ZLIB_INSTALL "Install zlib and CMake targets" OFF)
 option(ZLIB_USE_STATIC_LIBS "Build zlib a static library" OFF) # Use the same name as FindZLIB module's hint variable
 
 # Download zlib source
@@ -134,19 +134,41 @@ if(ZLIB_ENABLE_LFS)
 endif()
 
 # Install zlib
-install(
-    TARGETS zlib
-    FILE_SET HEADERS
-)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/zlib.pc.in
-    ${zlib_BINARY_DIR}/zlib.pc
-    @ONLY
-)
-install(
-    FILES ${zlib_BINARY_DIR}/zlib.pc
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-)
+if(ZLIB_INSTALL)
+    include(CMakePackageConfigHelpers)
+    include(GNUInstallDirs)
+
+    write_basic_package_version_file(
+        ${CMAKE_CURRENT_BINARY_DIR}/zlib-config-version.cmake
+        COMPATIBILITY SameMajorVersion
+    )
+    install(
+        TARGETS ZLIB
+        EXPORT zlibTargets
+        FILE_SET HEADERS
+    )
+    install(
+        EXPORT zlibTargets
+        NAMESPACE ZLIB::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/zlib
+    )
+    install(
+        FILES
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/zlib-config.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/zlib-config-version.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/zlib
+    )
+
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/zlib.pc.in
+        ${zlib_BINARY_DIR}/zlib.pc
+        @ONLY
+    )
+    install(
+        FILES ${zlib_BINARY_DIR}/zlib.pc
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+    )
+endif()
 
 if(PROJECT_IS_TOP_LEVEL)
     add_subdirectory(apps)
