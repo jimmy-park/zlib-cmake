@@ -7,9 +7,9 @@
         {
             "name": "linux",
             "inherits": [
-                "base",
                 "host-linux",
-                "ninja"
+                "ninja",
+                "default"
             ]
         }
     ],

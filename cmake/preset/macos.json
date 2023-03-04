@@ -7,9 +7,9 @@
         {
             "name": "macos",
             "inherits": [
-                "base",
                 "host-macos",
-                "xcode"
+                "xcode",
+                "default"
             ]
         }
     ],

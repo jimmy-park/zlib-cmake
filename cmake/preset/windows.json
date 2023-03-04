@@ -7,10 +7,10 @@
         {
             "name": "windows",
             "inherits": [
-                "base",
                 "host-windows",
                 "vs2022",
-                "target-windows-x64"
+                "target-windows-x64",
+                "default"
             ]
         }
     ],

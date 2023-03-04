@@ -2,13 +2,14 @@
     "version": 5,
     "configurePresets": [
         {
-            "name": "base",
+            "name": "default",
             "hidden": true,
             "binaryDir": "${sourceDir}/build/${presetName}",
             "installDir": "${sourceDir}/install/${presetName}",
             "cmakeExecutable": "cmake",
             "cacheVariables": {
-                "CPM_SOURCE_CACHE": "${sourceDir}/build/.cache"
+                "CPM_SOURCE_CACHE": "${sourceDir}/build/.cache",
+                "ZLIB_INSTALL": true
             }
         },
         {
