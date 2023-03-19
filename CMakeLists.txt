@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.24)
 
 project(
     zlib-cmake
-    VERSION 0.3.0
+    VERSION 0.4.0
     DESCRIPTION "Build zlib using modern CMake"
     HOMEPAGE_URL "https://github.com/jimmy-park/zlib-cmake"
     LANGUAGES C
@@ -20,7 +20,7 @@ set(ZLIB_LATEST_SHA256 1525952a0a567581792613a9723333d7f8cc20b87a81f920fb8bc7e3f
 option(ZLIB_ENABLE_LFS "Enable Large-File Support (LFS) on 32-bit system" OFF)
 option(ZLIB_INSTALL "Install zlib and CMake targets" OFF)
 option(ZLIB_TEST "Enable testing and build tests" OFF)
-option(ZLIB_USE_STATIC_LIBS "Build zlib a static library" OFF) # Use the same name as FindZLIB module's hint variable
+option(ZLIB_USE_STATIC_LIBS "Build zlib as a static library" OFF) # Use the same name as FindZLIB module's hint variable
 
 # Download zlib source
 CPMAddPackage(

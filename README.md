@@ -1,5 +1,7 @@
 # zlib-cmake
 
+[![CI](https://github.com/jimmy-park/zlib-cmake/actions/workflows/ci.yaml/badge.svg)](https://github.com/jimmy-park/zlib-cmake/actions/workflows/ci.yaml)
+
 Build zlib using modern CMake and override the `FindZLIB` module
 
 ## Requirements
@@ -12,6 +14,7 @@ Build zlib using modern CMake and override the `FindZLIB` module
 | ---                           | ---       | ---           | ---                                               |
 | `ZLIB_ENABLE_LFS`             | bool      | `OFF`         | Enable Large-File Support (LFS) on 32-bit system  |
 | `ZLIB_INSTALL`                | bool      | `OFF`         | Install zlib and CMake targets                    |
+| `ZLIB_TEST`                   | bool      | `OFF`         | Enable testing and build tests                    |
 | `ZLIB_USE_STATIC_LIBS`        | bool      | `OFF`         | Build zlib as a static library                    |
 
 ### Notes
