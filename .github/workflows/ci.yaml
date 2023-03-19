@@ -1,0 +1,44 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+    tags-ignore:
+      - "**"
+    paths-ignore:
+      - "**/README.md"
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            preset: linux
+          - os: macos-latest
+            preset: macos
+          - os: windows-latest
+            preset: windows
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/.cpm
+          key: zlib-${{ matrix.version }}-${{ matrix.preset }}-${{ github.run_id }}
+          restore-keys: zlib-${{ matrix.version }}-${{ matrix.preset }}-
+
+      - name: Install dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build
+
+      - name: Configure
+        run: cmake --preset ${{ matrix.preset }} -DCPM_SOURCE_CACHE="${{ github.workspace }}/.cpm"
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.preset }}-release
+
+      - name: Install
+        run: cmake --build --preset ${{ matrix.preset }}-release-install
