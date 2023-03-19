@@ -8,6 +8,7 @@ project(
     LANGUAGES C
 )
 
+include(CheckIncludeFile)
 include(FetchContent)
 include(cmake/GetCPM.cmake)
 
@@ -29,6 +30,7 @@ CPMAddPackage(
 )
 
 # Modify zlib source
+check_include_file(unistd.h Z_HAVE_UNISTD_H)
 file(REMOVE
     ${zlib-source_SOURCE_DIR}/CMakeLists.txt
     ${zlib-source_SOURCE_DIR}/zconf.h
