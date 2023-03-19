@@ -19,6 +19,7 @@ set(ZLIB_LATEST_SHA256 1525952a0a567581792613a9723333d7f8cc20b87a81f920fb8bc7e3f
 # Custom options
 option(ZLIB_ENABLE_LFS "Enable Large-File Support (LFS) on 32-bit system" OFF)
 option(ZLIB_INSTALL "Install zlib and CMake targets" OFF)
+option(ZLIB_TEST "Enable testing and build tests" OFF)
 option(ZLIB_USE_STATIC_LIBS "Build zlib a static library" OFF) # Use the same name as FindZLIB module's hint variable
 
 # Download zlib source
@@ -174,4 +175,11 @@ endif()
 
 if(PROJECT_IS_TOP_LEVEL)
     add_subdirectory(apps)
+endif()
+
+if(ZLIB_TEST)
+    include(CTest)
+    add_executable(example ${zlib_SOURCE_DIR}/test/example.c)
+    target_link_libraries(example PRIVATE ZLIB::ZLIB)
+    add_test(test example)
 endif()

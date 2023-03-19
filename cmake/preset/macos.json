@@ -66,5 +66,25 @@
             ],
             "configurePreset": "macos"
         }
+    ],
+    "testPresets": [
+        {
+            "name": "macos-debug",
+            "configurePreset": "macos",
+            "inherits": [
+                "host-macos",
+                "debug",
+                "options"
+            ]
+        },
+        {
+            "name": "macos-release",
+            "configurePreset": "macos",
+            "inherits": [
+                "host-macos",
+                "release",
+                "options"
+            ]
+        }
     ]
 }

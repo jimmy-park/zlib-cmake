@@ -9,7 +9,8 @@
             "cmakeExecutable": "cmake",
             "cacheVariables": {
                 "CPM_SOURCE_CACHE": "${sourceDir}/build/.cache",
-                "ZLIB_INSTALL": true
+                "ZLIB_INSTALL": true,
+                "ZLIB_TEST": true
             }
         },
         {
@@ -142,6 +143,52 @@
             "name": "install",
             "hidden": true,
             "targets": "install"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "host-linux",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "host-macos",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "host-windows",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "debug",
+            "hidden": true,
+            "configuration": "Debug"
+        },
+        {
+            "name": "release",
+            "hidden": true,
+            "configuration": "Release"
+        },
+        {
+            "name": "options",
+            "hidden": true,
+            "output": {
+                "verbosity": "verbose"
+            }
         }
     ]
 }

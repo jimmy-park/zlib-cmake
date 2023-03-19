@@ -67,5 +67,25 @@
             ],
             "configurePreset": "windows"
         }
+    ],
+    "testPresets": [
+        {
+            "name": "windows-debug",
+            "configurePreset": "windows",
+            "inherits": [
+                "host-windows",
+                "debug",
+                "options"
+            ]
+        },
+        {
+            "name": "windows-release",
+            "configurePreset": "windows",
+            "inherits": [
+                "host-windows",
+                "release",
+                "options"
+            ]
+        }
     ]
 }

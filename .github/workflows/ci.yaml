@@ -12,6 +12,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        config: [debug, release]
         include:
           - os: ubuntu-latest
             preset: linux
@@ -25,8 +26,8 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/.cpm
-          key: zlib-${{ matrix.version }}-${{ matrix.preset }}-${{ github.run_id }}
-          restore-keys: zlib-${{ matrix.version }}-${{ matrix.preset }}-
+          key: zlib-${{ matrix.preset }}-${{ matrix.config }}-${{ github.run_id }}
+          restore-keys: zlib-${{ matrix.preset }}-${{ matrix.config }}-
 
       - name: Install dependencies
         if: runner.os == 'Linux'
@@ -38,7 +39,10 @@ jobs:
         run: cmake --preset ${{ matrix.preset }} -DCPM_SOURCE_CACHE="${{ github.workspace }}/.cpm"
 
       - name: Build
-        run: cmake --build --preset ${{ matrix.preset }}-release
+        run: cmake --build --preset ${{ matrix.preset }}-${{ matrix.config }}
+
+      - name: Test
+        run: ctest --preset ${{ matrix.preset }}-${{ matrix.config }}
 
       - name: Install
-        run: cmake --build --preset ${{ matrix.preset }}-release-install
+        run: cmake --build --preset ${{ matrix.preset }}-${{ matrix.config }}-install

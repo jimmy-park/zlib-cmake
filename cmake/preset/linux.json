@@ -66,5 +66,25 @@
             ],
             "configurePreset": "linux"
         }
+    ],
+    "testPresets": [
+        {
+            "name": "linux-debug",
+            "configurePreset": "linux",
+            "inherits": [
+                "host-linux",
+                "debug",
+                "options"
+            ]
+        },
+        {
+            "name": "linux-release",
+            "configurePreset": "linux",
+            "inherits": [
+                "host-linux",
+                "release",
+                "options"
+            ]
+        }
     ]
 }
