@@ -179,7 +179,38 @@ endif()
 
 if(ZLIB_TEST)
     include(CTest)
+
     add_executable(example ${zlib_SOURCE_DIR}/test/example.c)
     target_link_libraries(example PRIVATE ZLIB::ZLIB)
-    add_test(test example)
+    add_test(test_example example)
+
+    add_executable(infcover ${zlib_SOURCE_DIR}/test/infcover.c)
+    target_link_libraries(infcover PRIVATE ZLIB::ZLIB)
+    add_test(test_infcover infcover)
+
+    add_executable(minigzip ${zlib_SOURCE_DIR}/test/minigzip.c)
+    target_link_libraries(minigzip PRIVATE ZLIB::ZLIB)
+    file(
+        GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/test_minigzip.cmake
+        CONTENT
+        "execute_process(
+            COMMAND cmake -E echo hello world
+            COMMAND $<TARGET_FILE:minigzip>
+            COMMAND $<TARGET_FILE:minigzip> -d
+            COMMAND_ERROR_IS_FATAL ANY
+        )"
+    )
+    add_test(
+        NAME test_minigzip
+        COMMAND cmake -P ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/test_minigzip.cmake
+        COMMAND_EXPAND_LISTS
+    )
+
+    if(CMAKE_SYSTEM_NAME STREQUAL "Windows" AND NOT ZLIB_USE_STATIC_LIBS AND BUILD_SHARED_LIBS)
+        add_custom_command(
+            TARGET minigzip POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:minigzip> $<TARGET_FILE_DIR:minigzip>
+            COMMAND_EXPAND_LISTS
+        )
+    endif()
 endif()
