@@ -41,6 +41,9 @@ configure_file(
     ${zlib-source_BINARY_DIR}/zconf.h
     @ONLY
 )
+file(READ ${zlib-source_SOURCE_DIR}/zutil.c ZUTIL)
+string(REPLACE "malloc(items * size)" "malloc((size_t) items * size)" ZUTIL "${ZUTIL}")
+file(WRITE ${zlib-source_SOURCE_DIR}/zutil.c "${ZUTIL}")
 
 # Override find_package(ZLIB)
 FetchContent_Declare(
