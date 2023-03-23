@@ -9,81 +9,41 @@
             "inherits": [
                 "host-windows",
                 "vs2022",
-                "target-windows-x64",
                 "default"
             ]
         }
     ],
     "buildPresets": [
         {
-            "name": "windows-debug",
+            "name": "windows",
+            "configurePreset": "windows",
             "inherits": [
-                "host-windows",
-                "debug"
-            ],
-            "configurePreset": "windows"
+                "host-windows"
+            ]
         },
         {
-            "name": "windows-debug-clean",
+            "name": "windows-clean",
+            "configurePreset": "windows",
             "inherits": [
                 "host-windows",
-                "debug",
                 "clean"
-            ],
-            "configurePreset": "windows"
+            ]
         },
         {
-            "name": "windows-debug-install",
+            "name": "windows-install",
+            "configurePreset": "windows",
             "inherits": [
                 "host-windows",
-                "debug",
                 "install"
-            ],
-            "configurePreset": "windows"
-        },
-        {
-            "name": "windows-release",
-            "inherits": [
-                "host-windows",
-                "release"
-            ],
-            "configurePreset": "windows"
-        },
-        {
-            "name": "windows-release-clean",
-            "inherits": [
-                "host-windows",
-                "release",
-                "clean"
-            ],
-            "configurePreset": "windows"
-        },
-        {
-            "name": "windows-release-install",
-            "inherits": [
-                "host-windows",
-                "release",
-                "install"
-            ],
-            "configurePreset": "windows"
+            ]
         }
     ],
     "testPresets": [
         {
-            "name": "windows-debug",
+            "name": "windows",
             "configurePreset": "windows",
             "inherits": [
                 "host-windows",
-                "debug",
-                "options"
-            ]
-        },
-        {
-            "name": "windows-release",
-            "configurePreset": "windows",
-            "inherits": [
-                "host-windows",
-                "release",
                 "options"
             ]
         }

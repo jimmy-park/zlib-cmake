@@ -9,17 +9,19 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        config: [debug, release]
-        type: [BUILD_SHARED_LIBS=OFF, BUILD_SHARED_LIBS=ON]
-        lfs: [ZLIB_ENABLE_LFS=OFF, ZLIB_ENABLE_LFS=ON]
+        preset: [linux-clang, linux-gcc, macos, windows]
+        config: [Debug, Release]
+        type: [{ shared: ON }, { shared: OFF }]
+        lfs: [{ enable: ON }, { enable: OFF }]
         include:
-          - os: ubuntu-latest
-            preset: linux
-          - os: macos-latest
-            preset: macos
-          - os: windows-latest
-            preset: windows
+          - preset: linux-clang
+            os: ubuntu-latest
+          - preset: linux-gcc
+            os: ubuntu-latest
+          - preset: macos
+            os: macos-latest
+          - preset: windows
+            os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -35,36 +37,18 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ninja-build
 
-      - name: Configure
+      - name: Configure CMake
         run: >
           cmake --preset ${{ matrix.preset }}
           -DCPM_SOURCE_CACHE=".cpm"
-          -D${{ matrix.type }}
-          -D${{ matrix.lfs }}
+          -DBUILD_SHARED_LIBS=${{ matrix.type.shared }}
+          -DZLIB_ENABLE_LFS=${{ matrix.lfs.enable }}
 
       - name: Build
-        run: cmake --build --preset ${{ matrix.preset }}-${{ matrix.config }}
+        run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }}
 
       - name: Test
-        run: ctest --preset ${{ matrix.preset }}-${{ matrix.config }}
+        run: ctest --preset ${{ matrix.preset }} -C ${{ matrix.config }}
 
       - name: Install
-        run: cmake --build --preset ${{ matrix.preset }}-${{ matrix.config }}-install
-  analyze:
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: .cpm
-          key: zlib
-          enableCrossOsArchive: true
-
-      - name: Set environment variables
-        run: echo "CPM_SOURCE_CACHE=.cpm" >> $GITHUB_ENV
-
-      - uses: github/codeql-action/init@v2
-      - uses: github/codeql-action/autobuild@v2
-      - uses: github/codeql-action/analyze@v2
+        run: cmake --build --preset ${{ matrix.preset }}-install --config ${{ matrix.config }}

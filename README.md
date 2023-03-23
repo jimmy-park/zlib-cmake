@@ -1,6 +1,7 @@
 # zlib-cmake
 
 [![CI](https://github.com/jimmy-park/zlib-cmake/actions/workflows/ci.yaml/badge.svg)](https://github.com/jimmy-park/zlib-cmake/actions/workflows/ci.yaml)
+[![CodeQL](https://github.com/jimmy-park/zlib-cmake/actions/workflows/codeql.yaml/badge.svg)](https://github.com/jimmy-park/zlib-cmake/actions/workflows/codeql.yaml)
 
 Build zlib using modern CMake and override the `FindZLIB` module
 

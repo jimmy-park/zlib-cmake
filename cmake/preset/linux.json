@@ -5,84 +5,86 @@
     ],
     "configurePresets": [
         {
-            "name": "linux",
+            "name": "linux-clang",
             "inherits": [
                 "host-linux",
                 "ninja",
+                "clang",
+                "default"
+            ]
+        },
+        {
+            "name": "linux-gcc",
+            "inherits": [
+                "host-linux",
+                "ninja",
+                "gcc",
                 "default"
             ]
         }
     ],
     "buildPresets": [
         {
-            "name": "linux-debug",
+            "name": "linux-clang",
+            "configurePreset": "linux-clang",
             "inherits": [
-                "host-linux",
-                "debug"
-            ],
-            "configurePreset": "linux"
+                "host-linux"
+            ]
         },
         {
-            "name": "linux-debug-clean",
+            "name": "linux-clang-clean",
+            "configurePreset": "linux-clang",
             "inherits": [
                 "host-linux",
-                "debug",
                 "clean"
-            ],
-            "configurePreset": "linux"
+            ]
         },
         {
-            "name": "linux-debug-install",
+            "name": "linux-clang-install",
+            "configurePreset": "linux-clang",
             "inherits": [
                 "host-linux",
-                "debug",
                 "install"
-            ],
-            "configurePreset": "linux"
+            ]
         },
         {
-            "name": "linux-release",
+            "name": "linux-gcc",
+            "configurePreset": "linux-gcc",
             "inherits": [
-                "host-linux",
-                "release"
-            ],
-            "configurePreset": "linux"
+                "host-linux"
+            ]
         },
         {
-            "name": "linux-release-clean",
+            "name": "linux-gcc-clean",
+            "configurePreset": "linux-gcc",
             "inherits": [
                 "host-linux",
-                "release",
                 "clean"
-            ],
-            "configurePreset": "linux"
+            ]
         },
         {
-            "name": "linux-release-install",
+            "name": "linux-gcc-install",
+            "configurePreset": "linux-gcc",
             "inherits": [
                 "host-linux",
-                "release",
                 "install"
-            ],
-            "configurePreset": "linux"
+            ]
         }
     ],
     "testPresets": [
         {
-            "name": "linux-debug",
-            "configurePreset": "linux",
+            "name": "linux-clang",
+            "configurePreset": "linux-clang",
             "inherits": [
                 "host-linux",
-                "debug",
                 "options"
             ]
         },
         {
-            "name": "linux-release",
-            "configurePreset": "linux",
+            "name": "linux-gcc",
+            "configurePreset": "linux-gcc",
             "inherits": [
                 "host-linux",
-                "release",
                 "options"
             ]
         }

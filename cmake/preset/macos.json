@@ -15,74 +15,35 @@
     ],
     "buildPresets": [
         {
-            "name": "macos-debug",
+            "name": "macos",
+            "configurePreset": "macos",
             "inherits": [
-                "host-macos",
-                "debug"
-            ],
-            "configurePreset": "macos"
+                "host-macos"
+            ]
         },
         {
-            "name": "macos-debug-clean",
+            "name": "macos-clean",
+            "configurePreset": "macos",
             "inherits": [
                 "host-macos",
-                "debug",
                 "clean"
-            ],
-            "configurePreset": "macos"
+            ]
         },
         {
-            "name": "macos-debug-install",
+            "name": "macos-install",
+            "configurePreset": "macos",
             "inherits": [
                 "host-macos",
-                "debug",
                 "install"
-            ],
-            "configurePreset": "macos"
-        },
-        {
-            "name": "macos-release",
-            "inherits": [
-                "host-macos",
-                "release"
-            ],
-            "configurePreset": "macos"
-        },
-        {
-            "name": "macos-release-clean",
-            "inherits": [
-                "host-macos",
-                "release",
-                "clean"
-            ],
-            "configurePreset": "macos"
-        },
-        {
-            "name": "macos-release-install",
-            "inherits": [
-                "host-macos",
-                "release",
-                "install"
-            ],
-            "configurePreset": "macos"
+            ]
         }
     ],
     "testPresets": [
         {
-            "name": "macos-debug",
+            "name": "macos",
             "configurePreset": "macos",
             "inherits": [
                 "host-macos",
-                "debug",
-                "options"
-            ]
-        },
-        {
-            "name": "macos-release",
-            "configurePreset": "macos",
-            "inherits": [
-                "host-macos",
-                "release",
                 "options"
             ]
         }

@@ -64,35 +64,17 @@
             "generator": "Xcode"
         },
         {
-            "name": "target-windows-x86",
+            "name": "clang",
             "hidden": true,
-            "architecture": {
-                "value": "Win32",
-                "strategy": "set"
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "clang++"
             }
         },
         {
-            "name": "target-windows-x64",
+            "name": "gcc",
             "hidden": true,
-            "architecture": {
-                "value": "x64",
-                "strategy": "set"
-            }
-        },
-        {
-            "name": "target-windows-arm",
-            "hidden": true,
-            "architecture": {
-                "value": "ARM",
-                "strategy": "set"
-            }
-        },
-        {
-            "name": "target-windows-arm64",
-            "hidden": true,
-            "architecture": {
-                "value": "ARM64",
-                "strategy": "set"
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "g++"
             }
         }
     ],
@@ -123,16 +105,6 @@
                 "lhs": "${hostSystemName}",
                 "rhs": "Windows"
             }
-        },
-        {
-            "name": "debug",
-            "hidden": true,
-            "configuration": "Debug"
-        },
-        {
-            "name": "release",
-            "hidden": true,
-            "configuration": "Release"
         },
         {
             "name": "clean",
@@ -172,16 +144,6 @@
                 "lhs": "${hostSystemName}",
                 "rhs": "Windows"
             }
-        },
-        {
-            "name": "debug",
-            "hidden": true,
-            "configuration": "Debug"
-        },
-        {
-            "name": "release",
-            "hidden": true,
-            "configuration": "Release"
         },
         {
             "name": "options",
