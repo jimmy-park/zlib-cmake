@@ -11,8 +11,8 @@ jobs:
       matrix:
         preset: [linux-clang, linux-gcc, macos, windows]
         config: [Debug, Release]
-        type: [{ shared: ON }, { shared: OFF }]
-        lfs: [{ enable: ON }, { enable: OFF }]
+        shared: [ON, OFF]
+        lfs: [ON, OFF]
         include:
           - preset: linux-clang
             os: ubuntu-latest
@@ -41,8 +41,8 @@ jobs:
         run: >
           cmake --preset ${{ matrix.preset }}
           -DCPM_SOURCE_CACHE=".cpm"
-          -DBUILD_SHARED_LIBS=${{ matrix.type.shared }}
-          -DZLIB_ENABLE_LFS=${{ matrix.lfs.enable }}
+          -DBUILD_SHARED_LIBS=${{ matrix.shared }}
+          -DZLIB_ENABLE_LFS=${{ matrix.lfs }}
 
       - name: Build
         run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }}
