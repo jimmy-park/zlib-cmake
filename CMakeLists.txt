@@ -153,6 +153,11 @@ if(ZLIB_INSTALL)
         EXPORT zlibTargets
         FILE_SET HEADERS
     )
+    export(
+        TARGETS ZLIB
+        NAMESPACE ZLIB::
+        FILE ${CMAKE_CURRENT_BINARY_DIR}/zlib-target.cmake
+    )
     install(
         EXPORT zlibTargets
         NAMESPACE ZLIB::
