@@ -54,7 +54,8 @@
             "hidden": true,
             "toolchainFile": "${sourceDir}/cmake/toolchain/ios.cmake",
             "cacheVariables": {
-                "CMAKE_OSX_SYSROOT": "iphoneos"
+                "CMAKE_OSX_SYSROOT": "iphoneos",
+                "ZLIB_TEST": false
             }
         },
         {
@@ -62,7 +63,8 @@
             "hidden": true,
             "toolchainFile": "${sourceDir}/cmake/toolchain/ios.cmake",
             "cacheVariables": {
-                "CMAKE_OSX_SYSROOT": "iphonesimulator"
+                "CMAKE_OSX_SYSROOT": "iphonesimulator",
+                "ZLIB_TEST": false
             }
         },
         {
@@ -71,7 +73,8 @@
             "toolchainFile": "$env{ANDROID_NDK}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
                 "ANDROID_NDK": "$env{ANDROID_NDK}",
-                "ANDROID_PLATFORM": "android-33"
+                "ANDROID_PLATFORM": "android-33",
+                "ZLIB_TEST": false
             }
         },
         {
