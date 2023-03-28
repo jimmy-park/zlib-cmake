@@ -1,19 +1,39 @@
 name: CI
-on:
-  push:
-    branches: ["**"]
-    tags-ignore: ["**"]
-  pull_request:
-    branches: ["**"]
+
+on: [push, pull_request]
+
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
-        preset: [linux-clang, linux-gcc, macos, windows]
+        preset:
+          - android-arm
+          - android-arm64
+          - android-x86
+          - android-x86_64
+          - ios
+          - ios_sim
+          - linux-clang
+          - linux-gcc
+          - macos
+          - windows
         config: [Debug, Release]
         shared: [ON, OFF]
         lfs: [ON, OFF]
         include:
+          - preset: android-arm
+            os: ubuntu-latest
+          - preset: android-arm64
+            os: ubuntu-latest
+          - preset: android-x86
+            os: ubuntu-latest
+          - preset: android-x86_64
+            os: ubuntu-latest
+          - preset: ios
+            os: macos-latest
+          - preset: ios_sim
+            os: macos-latest
           - preset: linux-clang
             os: ubuntu-latest
           - preset: linux-gcc
@@ -48,6 +68,7 @@ jobs:
         run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }}
 
       - name: Test
+        if: contains(fromJSON('["linux-clang", "linux-gcc", "macos", "windows"]'), matrix.preset)
         run: ctest --preset ${{ matrix.preset }} -C ${{ matrix.config }}
 
       - name: Install
