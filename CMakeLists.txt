@@ -181,10 +181,6 @@ if(ZLIB_INSTALL)
     )
 endif()
 
-if(PROJECT_IS_TOP_LEVEL)
-    add_subdirectory(apps)
-endif()
-
 if(ZLIB_TEST)
     include(CTest)
 
@@ -221,4 +217,8 @@ if(ZLIB_TEST)
             COMMAND_EXPAND_LISTS
         )
     endif()
+endif()
+
+if(PROJECT_IS_TOP_LEVEL AND NOT CMAKE_CROSSCOMPILING)
+    add_subdirectory(apps)
 endif()
