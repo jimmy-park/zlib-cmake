@@ -19,8 +19,8 @@ jobs:
           - macos
           - windows
         config: [Debug, Release]
-        shared: [ON, OFF]
-        lfs: [ON, OFF]
+        shared: [OFF, ON]
+        lfs: [OFF, ON]
         include:
           - preset: android-arm
             os: ubuntu-latest
@@ -48,7 +48,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: .cpm
-          key: zlib
+          key: zlib-1.2.13
           enableCrossOsArchive: true
 
       - name: Install dependencies
