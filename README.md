@@ -5,6 +5,8 @@
 
 Build zlib using modern CMake and override the `FindZLIB` module
 
+Tested on major platforms (`Linux`, `macOS`, `Windows`, `Android`, `iOS`)
+
 ## Requirements
 
 - CMake 3.24+ (due to `FetchContent_Declare(OVERRIDE_FIND_PACKAGE)`)
