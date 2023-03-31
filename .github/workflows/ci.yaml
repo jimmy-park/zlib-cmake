@@ -57,12 +57,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ninja-build
 
+      - name: Generate cache.cmake
+        run: |
+          echo 'set(CPM_SOURCE_CACHE  ".cpm"               CACHE STRING "")' >> cache.cmake
+          echo 'set(BUILD_SHARED_LIBS ${{ matrix.shared }} CACHE BOOL   "")' >> cache.cmake
+          echo 'set(ZLIB_ENABLE_LFS   ${{ matrix.lfs }}    CACHE BOOL   "")' >> cache.cmake
+      - name: Append to cache.cmake
+        if: startsWith(matrix.preset, 'ios')
+        run: echo 'set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED NO CACHE BOOL "")' >> cache.cmake
+
       - name: Configure CMake
-        run: >
-          cmake --preset ${{ matrix.preset }}
-          -DCPM_SOURCE_CACHE=".cpm"
-          -DBUILD_SHARED_LIBS=${{ matrix.shared }}
-          -DZLIB_ENABLE_LFS=${{ matrix.lfs }}
+        run: cmake --preset ${{ matrix.preset }} -C cache.cmake
 
       - name: Build
         run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }}

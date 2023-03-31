@@ -29,8 +29,7 @@
             "hidden": true,
             "nativeToolOptions": [
                 "BUILD_LIBRARY_FOR_DISTRIBUTION=YES",
-                "SKIP_INSTALL=NO",
-                "CODE_SIGNING_ALLOWED=NO"
+                "SKIP_INSTALL=NO"
             ]
         },
         {
