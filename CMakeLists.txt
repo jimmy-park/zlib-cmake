@@ -131,7 +131,7 @@ set_target_properties(ZLIB PROPERTIES
     SOVERSION ${ZLIB_VERSION_MAJOR}
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows" AND NOT ZLIB_USE_STATIC_LIBS AND BUILD_SHARED_LIBS)
+if(WIN32 AND NOT ZLIB_USE_STATIC_LIBS AND BUILD_SHARED_LIBS)
     target_compile_definitions(ZLIB PUBLIC ZLIB_DLL)
 endif()
 
@@ -184,7 +184,7 @@ if(ZLIB_INSTALL)
     )
 endif()
 
-if(ZLIB_TEST)
+if(ZLIB_TEST AND NOT CMAKE_CROSSCOMPILING)
     include(CTest)
 
     add_executable(example ${zlib_SOURCE_DIR}/test/example.c)
@@ -213,7 +213,7 @@ if(ZLIB_TEST)
         COMMAND_EXPAND_LISTS
     )
 
-    if(CMAKE_SYSTEM_NAME STREQUAL "Windows" AND NOT ZLIB_USE_STATIC_LIBS AND BUILD_SHARED_LIBS)
+    if(WIN32 AND NOT ZLIB_USE_STATIC_LIBS AND BUILD_SHARED_LIBS)
         add_custom_command(
             TARGET minigzip POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:minigzip> $<TARGET_FILE_DIR:minigzip>
