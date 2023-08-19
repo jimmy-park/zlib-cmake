@@ -20,7 +20,14 @@ set(ZLIB_LATEST_SHA256 b5b06d60ce49c8ba700e0ba517fa07de80b5d4628a037f4be8ad16955
 option(ZLIB_ENABLE_LFS "Enable Large-File Support (LFS) on 32-bit system" OFF)
 option(ZLIB_INSTALL "Install zlib and CMake targets" OFF)
 option(ZLIB_TEST "Enable testing and build tests" OFF)
-option(ZLIB_USE_STATIC_LIBS "Build zlib as a static library" OFF) # Use the same name as FindZLIB module's hint variable
+
+if(DEFINED ZLIB_USE_STATIC_LIBS)
+    if(ZLIB_USE_STATIC_LIBS AND BUILD_SHARED_LIBS)
+        message(WARNING "ZLIB_USE_STATIC_LIBS is ON, but zlib will be built as a shared library")
+    elseif(NOT ZLIB_USE_STATIC_LIBS AND NOT BUILD_SHARED_LIBS)
+        message(WARNING "ZLIB_USE_STATIC_LIBS is OFF, but zlib will be built as a static library")
+    endif()
+endif()
 
 # Download zlib source
 CPMAddPackage(
@@ -111,13 +118,7 @@ set(ZLIB_SOURCES
     ${zlib_SOURCE_DIR}/zutil.h
 )
 
-if(ZLIB_USE_STATIC_LIBS)
-    set(ZLIB_LIBRARY_TYPE STATIC)
-else()
-    set(ZLIB_LIBRARY_TYPE "")
-endif()
-
-add_library(ZLIB ${ZLIB_LIBRARY_TYPE} ${ZLIB_SOURCES})
+add_library(ZLIB ${ZLIB_SOURCES})
 add_library(ZLIB::ZLIB ALIAS ZLIB)
 target_sources(ZLIB PUBLIC
     FILE_SET HEADERS
@@ -138,7 +139,7 @@ set_target_properties(ZLIB PROPERTIES
     SOVERSION ${ZLIB_VERSION_MAJOR}
 )
 
-if(WIN32 AND NOT ZLIB_USE_STATIC_LIBS AND BUILD_SHARED_LIBS)
+if(WIN32 AND BUILD_SHARED_LIBS)
     target_compile_definitions(ZLIB PUBLIC ZLIB_DLL)
 endif()
 
@@ -220,7 +221,7 @@ if(ZLIB_TEST AND NOT CMAKE_CROSSCOMPILING)
         COMMAND_EXPAND_LISTS
     )
 
-    if(WIN32 AND NOT ZLIB_USE_STATIC_LIBS AND BUILD_SHARED_LIBS)
+    if(WIN32 AND BUILD_SHARED_LIBS)
         add_custom_command(
             TARGET minigzip POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:minigzip> $<TARGET_FILE_DIR:minigzip>
