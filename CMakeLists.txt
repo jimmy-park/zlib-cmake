@@ -13,8 +13,8 @@ include(FetchContent)
 include(cmake/GetCPM.cmake)
 
 # Information of latest zlib release
-set(ZLIB_LATEST_VERSION 1.2.13 CACHE INTERNAL "zlib version of latest release")
-set(ZLIB_LATEST_SHA256 1525952a0a567581792613a9723333d7f8cc20b87a81f920fb8bc7e3f2251428 CACHE INTERNAL "Hash of archived zlib release")
+set(ZLIB_LATEST_VERSION 1.3 CACHE INTERNAL "zlib version of latest release")
+set(ZLIB_LATEST_SHA256 b5b06d60ce49c8ba700e0ba517fa07de80b5d4628a037f4be8ad16955be7a7c0 CACHE INTERNAL "Hash of archived zlib release")
 
 # Custom options
 option(ZLIB_ENABLE_LFS "Enable Large-File Support (LFS) on 32-bit system" OFF)
@@ -57,21 +57,28 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(ZLIB)
 
+# Result variables of FindZLIB module
 set(ZLIB_INCLUDE_DIRS ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR} CACHE STRING "Override FindZLIB variables" FORCE)
 set(ZLIB_LIBRARIES "" CACHE STRING "Override FindZLIB variables" FORCE)
 set(ZLIB_FOUND ON CACHE BOOL "Override FindZLIB variables" FORCE)
-
-string(REPLACE "." ";" ZLIB_LATEST_VERSION_LIST ${ZLIB_LATEST_VERSION})
-list(GET ZLIB_LATEST_VERSION_LIST 0 ZLIB_LATEST_VERSION_MAJOR)
-list(GET ZLIB_LATEST_VERSION_LIST 1 ZLIB_LATEST_VERSION_MINOR)
-list(GET ZLIB_LATEST_VERSION_LIST 2 ZLIB_LATEST_VERSION_PATCH)
-
 set(ZLIB_VERSION ${ZLIB_LATEST_VERSION} CACHE STRING "Override FindZLIB variables" FORCE)
+
+# Legacy variables of FindZLIB module
+set(VERSION_LEVEL MAJOR MINOR PATCH TWEAK)
+string(REPLACE "." ";" ZLIB_LATEST_VERSION_LIST ${ZLIB_LATEST_VERSION})
+
+foreach(level version IN ZIP_LISTS VERSION_LEVEL ZLIB_LATEST_VERSION_LIST)
+    set(ZLIB_LATEST_VERSION_${level} ${version})
+endforeach()
+
+foreach(level IN LISTS VERSION_LEVEL)
+    set(ZLIB_VERSION_${level} ${ZLIB_LATEST_VERSION_${level}} CACHE STRING "Override FindZLIB variables" FORCE)
+endforeach()
+
 set(ZLIB_VERSION_STRING ${ZLIB_VERSION} CACHE STRING "Override FindZLIB variables" FORCE)
-set(ZLIB_VERSION_MAJOR ${ZLIB_LATEST_VERSION_MAJOR} CACHE STRING "Override FindZLIB variables" FORCE)
-set(ZLIB_VERSION_MINOR ${ZLIB_LATEST_VERSION_MINOR} CACHE STRING "Override FindZLIB variables" FORCE)
-set(ZLIB_VERSION_PATCH ${ZLIB_LATEST_VERSION_PATCH} CACHE STRING "Override FindZLIB variables" FORCE)
-set(ZLIB_VERSION_TWEAK "" CACHE STRING "Override FindZLIB variables" FORCE)
+set(ZLIB_MAJOR_VERSION ${ZLIB_VERSION_MAJOR} CACHE STRING "Override FindZLIB variables" FORCE)
+set(ZLIB_MINOR_VERSION ${ZLIB_VERSION_MINOR} CACHE STRING "Override FindZLIB variables" FORCE)
+set(ZLIB_PATCH_VERSION ${ZLIB_VERSION_PATCH} CACHE STRING "Override FindZLIB variables" FORCE)
 
 set(ZLIB_HEADERS
     ${zlib_BINARY_DIR}/zconf.h
@@ -127,7 +134,7 @@ set_target_properties(ZLIB PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
     DEBUG_POSTFIX d
     DEFINE_SYMBOL ZLIB_INTERNAL
-    VERSION ${ZLIB_VERSION_STRING}
+    VERSION ${ZLIB_VERSION}
     SOVERSION ${ZLIB_VERSION_MAJOR}
 )
 
