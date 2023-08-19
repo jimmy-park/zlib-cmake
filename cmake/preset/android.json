@@ -1,9 +1,18 @@
 {
-    "version": 5,
+    "version": 4,
     "include": [
         "base.json"
     ],
     "configurePresets": [
+        {
+            "name": "android",
+            "inherits": [
+                "host-not-windows",
+                "target-android",
+                "ninja",
+                "default"
+            ]
+        },
         {
             "name": "android-arm",
             "inherits": [
@@ -43,26 +52,17 @@
     ],
     "buildPresets": [
         {
-            "name": "android-arm",
-            "configurePreset": "android-arm",
+            "name": "android",
+            "configurePreset": "android",
             "inherits": [
                 "host-not-windows"
             ]
         },
         {
-            "name": "android-arm-clean",
+            "name": "android-arm",
             "configurePreset": "android-arm",
             "inherits": [
-                "host-not-windows",
-                "clean"
-            ]
-        },
-        {
-            "name": "android-arm-install",
-            "configurePreset": "android-arm",
-            "inherits": [
-                "host-not-windows",
-                "install"
+                "host-not-windows"
             ]
         },
         {
@@ -73,22 +73,6 @@
             ]
         },
         {
-            "name": "android-arm64-clean",
-            "configurePreset": "android-arm64",
-            "inherits": [
-                "host-not-windows",
-                "clean"
-            ]
-        },
-        {
-            "name": "android-arm64-install",
-            "configurePreset": "android-arm64",
-            "inherits": [
-                "host-not-windows",
-                "install"
-            ]
-        },
-        {
             "name": "android-x86",
             "configurePreset": "android-x86",
             "inherits": [
@@ -96,42 +80,10 @@
             ]
         },
         {
-            "name": "android-x86-clean",
-            "configurePreset": "android-x86",
-            "inherits": [
-                "host-not-windows",
-                "clean"
-            ]
-        },
-        {
-            "name": "android-x86-install",
-            "configurePreset": "android-x86",
-            "inherits": [
-                "host-not-windows",
-                "install"
-            ]
-        },
-        {
             "name": "android-x86_64",
             "configurePreset": "android-x86_64",
             "inherits": [
                 "host-not-windows"
-            ]
-        },
-        {
-            "name": "android-x86_64-clean",
-            "configurePreset": "android-x86_64",
-            "inherits": [
-                "host-not-windows",
-                "clean"
-            ]
-        },
-        {
-            "name": "android-x86_64-install",
-            "configurePreset": "android-x86_64",
-            "inherits": [
-                "host-not-windows",
-                "install"
             ]
         }
     ]

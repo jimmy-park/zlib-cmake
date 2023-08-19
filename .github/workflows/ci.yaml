@@ -7,48 +7,24 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        preset:
-          - android-arm
-          - android-arm64
-          - android-x86
-          - android-x86_64
-          - ios
-          - ios_sim
-          - linux-clang
-          - linux-gcc
-          - macos
-          - windows
+        preset: [android, ios, linux-clang, linux-gcc, macos, windows]
         config: [Debug, Release]
         shared: [OFF, ON]
         lfs: [OFF, ON]
         include:
-          - preset: android-arm
-            os: ubuntu-latest
-          - preset: android-arm64
-            os: ubuntu-latest
-          - preset: android-x86
-            os: ubuntu-latest
-          - preset: android-x86_64
-            os: ubuntu-latest
-          - preset: ios
-            os: macos-latest
-          - preset: ios_sim
-            os: macos-latest
-          - preset: linux-clang
-            os: ubuntu-latest
-          - preset: linux-gcc
-            os: ubuntu-latest
-          - preset: macos
-            os: macos-latest
-          - preset: windows
-            os: windows-latest
+          - { os: macos-latest, preset: ios }
+          - { os: macos-latest, preset: macos }
+          - { os: ubuntu-latest, preset: android }
+          - { os: ubuntu-latest, preset: linux-clang }
+          - { os: ubuntu-latest, preset: linux-gcc }
+          - { os: windows-latest, preset: windows }
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
         with:
           path: .cpm
-          key: zlib-1.2.13
+          key: zlib-1.3
           enableCrossOsArchive: true
 
       - name: Install dependencies
@@ -77,4 +53,4 @@ jobs:
         run: ctest --preset ${{ matrix.preset }} -C ${{ matrix.config }}
 
       - name: Install
-        run: cmake --build --preset ${{ matrix.preset }}-install --config ${{ matrix.config }}
+        run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }} -t install
