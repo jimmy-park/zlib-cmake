@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.24)
 
 project(
     zlib-cmake
-    VERSION 0.5.0
+    VERSION 1.3
     DESCRIPTION "Build zlib using modern CMake"
     HOMEPAGE_URL "https://github.com/jimmy-park/zlib-cmake"
     LANGUAGES C
@@ -11,10 +11,6 @@ project(
 include(CheckIncludeFile)
 include(FetchContent)
 include(cmake/GetCPM.cmake)
-
-# Information of latest zlib release
-set(ZLIB_LATEST_VERSION 1.3 CACHE INTERNAL "zlib version of latest release")
-set(ZLIB_LATEST_SHA256 b5b06d60ce49c8ba700e0ba517fa07de80b5d4628a037f4be8ad16955be7a7c0 CACHE INTERNAL "Hash of archived zlib release")
 
 # Custom options
 option(ZLIB_ENABLE_LFS "Enable Large-File Support (LFS) on 32-bit system" OFF)
@@ -33,8 +29,8 @@ endif()
 CPMAddPackage(
     NAME zlib-source
     DOWNLOAD_ONLY ON
-    URL https://github.com/madler/zlib/archive/v${ZLIB_LATEST_VERSION}.tar.gz
-    URL_HASH SHA256=${ZLIB_LATEST_SHA256}
+    URL https://github.com/madler/zlib/archive/v${PROJECT_VERSION}.tar.gz
+    URL_HASH SHA256=b5b06d60ce49c8ba700e0ba517fa07de80b5d4628a037f4be8ad16955be7a7c0
 )
 
 # Modify zlib source
@@ -68,25 +64,18 @@ FetchContent_MakeAvailable(ZLIB)
 set(ZLIB_INCLUDE_DIRS ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR} CACHE STRING "Override FindZLIB variables" FORCE)
 set(ZLIB_LIBRARIES "" CACHE STRING "Override FindZLIB variables" FORCE)
 set(ZLIB_FOUND ON CACHE BOOL "Override FindZLIB variables" FORCE)
-set(ZLIB_VERSION ${ZLIB_LATEST_VERSION} CACHE STRING "Override FindZLIB variables" FORCE)
+set(ZLIB_VERSION ${PROJECT_VERSION} CACHE STRING "Override FindZLIB variables" FORCE)
 
 # Legacy variables of FindZLIB module
+set(ZLIB_VERSION_STRING ${ZLIB_VERSION} CACHE STRING "Override FindZLIB variables" FORCE)
 set(VERSION_LEVEL MAJOR MINOR PATCH TWEAK)
-string(REPLACE "." ";" ZLIB_LATEST_VERSION_LIST ${ZLIB_LATEST_VERSION})
-
-foreach(level version IN ZIP_LISTS VERSION_LEVEL ZLIB_LATEST_VERSION_LIST)
-    set(ZLIB_LATEST_VERSION_${level} ${version})
-endforeach()
 
 foreach(level IN LISTS VERSION_LEVEL)
-    set(ZLIB_VERSION_${level} ${ZLIB_LATEST_VERSION_${level}} CACHE STRING "Override FindZLIB variables" FORCE)
+    set(ZLIB_VERSION_${level} ${PROJECT_VERSION_${level}} CACHE STRING "Override FindZLIB variables" FORCE)
+    set(ZLIB_${level}_VERSION ${PROJECT_VERSION_${level}} CACHE STRING "Override FindZLIB variables" FORCE)
 endforeach()
 
-set(ZLIB_VERSION_STRING ${ZLIB_VERSION} CACHE STRING "Override FindZLIB variables" FORCE)
-set(ZLIB_MAJOR_VERSION ${ZLIB_VERSION_MAJOR} CACHE STRING "Override FindZLIB variables" FORCE)
-set(ZLIB_MINOR_VERSION ${ZLIB_VERSION_MINOR} CACHE STRING "Override FindZLIB variables" FORCE)
-set(ZLIB_PATCH_VERSION ${ZLIB_VERSION_PATCH} CACHE STRING "Override FindZLIB variables" FORCE)
-
+# Create ZLIB target
 set(ZLIB_HEADERS
     ${zlib_BINARY_DIR}/zconf.h
     ${zlib_SOURCE_DIR}/zlib.h
