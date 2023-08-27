@@ -25,5 +25,8 @@ jobs:
         run: cmake --preset windows
 
       - uses: github/codeql-action/init@v2
+        with:
+          languages: c
+          queries: security-extended
       - uses: github/codeql-action/autobuild@v2
       - uses: github/codeql-action/analyze@v2
