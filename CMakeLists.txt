@@ -47,9 +47,6 @@ configure_file(
 file(READ ${zlib-source_SOURCE_DIR}/zutil.c ZUTIL)
 string(REPLACE "malloc(items * size)" "malloc((size_t) items * size)" ZUTIL "${ZUTIL}")
 file(WRITE ${zlib-source_SOURCE_DIR}/zutil.c "${ZUTIL}")
-file(READ ${zlib-source_SOURCE_DIR}/test/infcover.c INFCOVER)
-string(REPLACE "%lu" "%zu" INFCOVER "${INFCOVER}")
-file(WRITE ${zlib-source_SOURCE_DIR}/test/infcover.c "${INFCOVER}")
 
 # Override find_package(ZLIB)
 FetchContent_Declare(
