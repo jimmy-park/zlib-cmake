@@ -218,7 +218,3 @@ if(ZLIB_TEST AND NOT CMAKE_CROSSCOMPILING)
         )
     endif()
 endif()
-
-if(PROJECT_IS_TOP_LEVEL AND NOT CMAKE_CROSSCOMPILING)
-    add_subdirectory(apps)
-endif()
