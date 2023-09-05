@@ -18,7 +18,7 @@ jobs:
       contents: read
       security-events: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Configure CMake on Windows
         if: runner.os == 'Windows'
