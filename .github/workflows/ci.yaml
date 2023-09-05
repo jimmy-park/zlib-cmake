@@ -20,7 +20,7 @@ jobs:
           - { os: windows-latest, preset: windows }
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/cache@v3
         with:
           path: .cpm
