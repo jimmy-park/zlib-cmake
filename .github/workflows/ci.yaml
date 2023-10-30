@@ -4,20 +4,27 @@ on: [push, pull_request]
 
 jobs:
   build:
+    name: ${{ matrix.preset }}-${{ matrix.config }}-${{ matrix.lfs }}-${{ matrix.sanitize }}
     strategy:
       fail-fast: false
       matrix:
-        preset: [android, ios, linux-clang, linux-gcc, macos, windows]
+        preset: [linux-clang, linux-gcc, macos, windows]
         config: [Debug, Release]
-        shared: [OFF, ON]
         lfs: [OFF, ON]
+        sanitize: [address, thread, undefined, leak, memory]
         include:
-          - { os: macos-latest, preset: ios }
-          - { os: macos-latest, preset: macos }
-          - { os: ubuntu-latest, preset: android }
-          - { os: ubuntu-latest, preset: linux-clang }
-          - { os: ubuntu-latest, preset: linux-gcc }
-          - { os: windows-latest, preset: windows }
+          - { preset: linux-clang, os: ubuntu-latest }
+          - { preset: linux-gcc, os: ubuntu-latest }
+          - { preset: macos, os: macos-latest }
+          - { preset: windows, os: windows-latest }
+        exclude:
+          - { preset: linux-gcc, sanitize: memory }
+          - { preset: macos, sanitize: leak }
+          - { preset: macos, sanitize: memory }
+          - { preset: windows, sanitize: thread }
+          - { preset: windows, sanitize: undefined }
+          - { preset: windows, sanitize: leak }
+          - { preset: windows, sanitize: memory }
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -33,20 +40,56 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ninja-build
 
-      - name: Configure CMake
+      - name: Configure
         run: >
           cmake --preset ${{ matrix.preset }}
-          -DBUILD_SHARED_LIBS=${{ matrix.shared }}
           -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO
           -DCPM_SOURCE_CACHE=".cpm"
           -DZLIB_ENABLE_LFS=${{ matrix.lfs }}
+          -DZLIB_SANITIZE=${{ matrix.sanitize }}
 
       - name: Build
         run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }}
 
       - name: Test
-        if: contains(fromJSON('["linux-clang", "linux-gcc", "macos", "windows"]'), matrix.preset)
         run: ctest --preset ${{ matrix.preset }} -C ${{ matrix.config }}
+
+      - name: Install
+        run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }} -t install
+  build-mobile:
+    name: ${{ matrix.preset }}-${{ matrix.config }}-${{ matrix.lfs }}
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [android, ios]
+        config: [Debug, Release]
+        lfs: [OFF, ON]
+        include:
+          - { preset: android, os: ubuntu-latest }
+          - { preset: ios, os: macos-latest }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v3
+        with:
+          path: .cpm
+          key: zlib-1.3
+          enableCrossOsArchive: true
+
+      - name: Install dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build
+
+      - name: Configure
+        run: >
+          cmake --preset ${{ matrix.preset }}
+          -DCPM_SOURCE_CACHE=.cpm
+          -DZLIB_ENABLE_LFS=${{ matrix.lfs }}
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }}
 
       - name: Install
         run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }} -t install

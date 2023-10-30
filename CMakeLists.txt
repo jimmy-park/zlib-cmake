@@ -11,6 +11,7 @@ project(
 include(CheckIncludeFile)
 include(FetchContent)
 include(cmake/GetCPM.cmake)
+include(cmake/UseSanitizer.cmake)
 
 # Custom options
 option(ZLIB_ENABLE_LFS "Enable Large-File Support (LFS) on 32-bit system" OFF)
@@ -183,11 +184,17 @@ if(ZLIB_TEST AND NOT CMAKE_CROSSCOMPILING)
 
     add_executable(example ${zlib_SOURCE_DIR}/test/example.c)
     target_link_libraries(example PRIVATE ZLIB::ZLIB)
-    add_test(test_example example)
+    add_test(
+        NAME test_example
+        COMMAND example
+    )
 
     add_executable(infcover ${zlib_SOURCE_DIR}/test/infcover.c)
     target_link_libraries(infcover PRIVATE ZLIB::ZLIB)
-    add_test(test_infcover infcover)
+    add_test(
+        NAME test_infcover
+        COMMAND infcover
+    )
 
     add_executable(minigzip ${zlib_SOURCE_DIR}/test/minigzip.c)
     target_link_libraries(minigzip PRIVATE ZLIB::ZLIB)
@@ -212,6 +219,13 @@ if(ZLIB_TEST AND NOT CMAKE_CROSSCOMPILING)
             TARGET minigzip POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:minigzip> $<TARGET_FILE_DIR:minigzip>
             COMMAND_EXPAND_LISTS
+        )
+    endif()
+
+    if(MSVC)
+        cmake_path(GET CMAKE_C_COMPILER PARENT_PATH VS_PATH)
+        set_tests_properties(test_example test_infcover test_minigzip
+            PROPERTIES ENVIRONMENT PATH=${VS_PATH}
         )
     endif()
 endif()
