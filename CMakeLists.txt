@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.25)
 
 project(
     zlib-cmake
@@ -8,8 +8,8 @@ project(
     LANGUAGES C
 )
 
-include(CheckIncludeFile)
 include(FetchContent)
+include(cmake/CheckZLIBConfig.cmake)
 include(cmake/GetCPM.cmake)
 include(cmake/UseSanitizer.cmake)
 
@@ -34,16 +34,7 @@ CPMAddPackage(
 )
 
 # Modify zlib source
-check_include_file(unistd.h Z_HAVE_UNISTD_H)
-file(REMOVE
-    ${zlib-source_SOURCE_DIR}/CMakeLists.txt
-    ${zlib-source_SOURCE_DIR}/zconf.h
-)
-configure_file(
-    ${zlib-source_SOURCE_DIR}/zconf.h.cmakein
-    ${zlib-source_BINARY_DIR}/zconf.h
-    @ONLY
-)
+file(REMOVE ${zlib-source_SOURCE_DIR}/CMakeLists.txt)
 file(READ ${zlib-source_SOURCE_DIR}/zutil.c ZUTIL)
 string(REPLACE "malloc(items * size)" "malloc((size_t) items * size)" ZUTIL "${ZUTIL}")
 file(WRITE ${zlib-source_SOURCE_DIR}/zutil.c "${ZUTIL}")
@@ -74,7 +65,7 @@ endforeach()
 
 # Create ZLIB target
 set(ZLIB_HEADERS
-    ${zlib_BINARY_DIR}/zconf.h
+    ${zlib_SOURCE_DIR}/zconf.h
     ${zlib_SOURCE_DIR}/zlib.h
 )
 set(ZLIB_SOURCES
@@ -123,6 +114,16 @@ set_target_properties(ZLIB PROPERTIES
     DEFINE_SYMBOL ZLIB_INTERNAL
     VERSION ${ZLIB_VERSION}
     SOVERSION ${ZLIB_VERSION_MAJOR}
+)
+
+target_compile_definitions(ZLIB PUBLIC
+    $<$<CONFIG:DEBUG>:ZLIB_DEBUG>
+    $<$<BOOL:${ZLIB_HAVE_OFF64_T}>:_LARGEFILE64_SOURCE=1>
+    $<$<NOT:$<BOOL:${ZLIB_HAVE_FSEEKO}>>:NO_FSEEKO>
+    $<$<NOT:$<BOOL:${ZLIB_HAVE_STRERROR}>>:NO_STRERROR>
+    $<$<BOOL:${ZLIB_HAVE_UNISTD_H}>:HAVE_UNISTD_H>
+    $<$<BOOL:${ZLIB_HAVE_STDARG_H}>:HAVE_STDARG_H>
+    $<$<BOOL:${ZLIB_HAVE_HIDDEN}>:HAVE_HIDDEN>
 )
 
 if(WIN32 AND BUILD_SHARED_LIBS)
