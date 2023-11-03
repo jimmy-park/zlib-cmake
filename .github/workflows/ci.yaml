@@ -8,13 +8,12 @@ env:
 
 jobs:
   build:
-    name: ${{ matrix.preset }}-${{ matrix.config }}-${{ matrix.lfs }}-${{ matrix.sanitize }}
+    name: ${{ matrix.preset }}-${{ matrix.config }}-${{ matrix.sanitize }}
     strategy:
       fail-fast: false
       matrix:
         preset: [linux-clang, linux-gcc, macos, windows]
         config: [Debug, Release]
-        lfs: [OFF, ON]
         sanitize: [address, thread, undefined, leak, memory]
         exclude:
           - { preset: linux-gcc, sanitize: memory }
@@ -49,7 +48,6 @@ jobs:
           cmake --preset ${{ matrix.preset }}
           -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO
           -DCPM_SOURCE_CACHE="${{ env.cpm-path }}"
-          -DZLIB_ENABLE_LFS=${{ matrix.lfs }}
           -DZLIB_SANITIZE=${{ matrix.sanitize }}
 
       - name: Build
@@ -62,13 +60,12 @@ jobs:
         run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }} -t install
 
   build-mobile:
-    name: ${{ matrix.preset }}-${{ matrix.config }}-${{ matrix.lfs }}
+    name: ${{ matrix.preset }}-${{ matrix.config }}
     strategy:
       fail-fast: false
       matrix:
         preset: [android, ios]
         config: [Debug, Release]
-        lfs: [OFF, ON]
         include:
           - { preset: android, os: ubuntu-latest }
           - { preset: ios, os: macos-latest }
@@ -91,7 +88,6 @@ jobs:
         run: >
           cmake --preset ${{ matrix.preset }}
           -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
-          -DZLIB_ENABLE_LFS=${{ matrix.lfs }}
 
       - name: Build
         run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }}
@@ -100,14 +96,13 @@ jobs:
         run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }} -t install
 
   build-bsd:
-    name: ${{ matrix.preset }}-${{ matrix.arch }}-${{ matrix.config }}-${{ matrix.lfs }}
+    name: ${{ matrix.preset }}-${{ matrix.arch }}-${{ matrix.config }}
     strategy:
       fail-fast: false
       matrix:
         preset: [freebsd, netbsd, openbsd]
         arch: [arm64, x86_64]
         config: [Debug, Release]
-        lfs: [OFF, ON]
         exclude:
           - { preset: netbsd, arch: arm64 }
         include:
@@ -133,7 +128,6 @@ jobs:
               -DCMAKE_BUILD_TYPE=${{ matrix.config }}                \
               -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install \
               -DCPM_SOURCE_CACHE=${{ env.cpm-path }}                 \
-              -DZLIB_ENABLE_LFS=${{ matrix.lfs }}                    \
               -DZLIB_INSTALL=ON                                      \
               -DZLIB_TEST=ON
             cmake --build build
@@ -143,13 +137,12 @@ jobs:
             cmake --install build
 
   build-msys2:
-    name: msys2-${{ matrix.preset }}-${{ matrix.config }}-${{ matrix.lfs }}
+    name: msys2-${{ matrix.preset }}-${{ matrix.config }}
     strategy:
       fail-fast: false
       matrix:
         preset: [mingw64, mingw32, ucrt64, clang64]
         config: [Debug, Release]
-        lfs: [OFF, ON]
         include:
           - { preset: mingw64, env: x86_64 }
           - { preset: mingw32, env: i686 }
@@ -181,7 +174,6 @@ jobs:
           -DCMAKE_BUILD_TYPE=${{ matrix.config }}
           -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
           -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
-          -DZLIB_ENABLE_LFS=${{ matrix.lfs }}
           -DZLIB_INSTALL=ON
           -DZLIB_TEST=ON
 

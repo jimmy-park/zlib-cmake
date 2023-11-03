@@ -14,7 +14,6 @@ include(cmake/GetCPM.cmake)
 include(cmake/UseSanitizer.cmake)
 
 # Custom options
-option(ZLIB_ENABLE_LFS "Enable Large-File Support (LFS) on 32-bit system" OFF)
 option(ZLIB_INSTALL "Install zlib and CMake targets" OFF)
 option(ZLIB_TEST "Enable testing and build tests" OFF)
 
@@ -128,13 +127,6 @@ set_target_properties(ZLIB PROPERTIES
 
 if(WIN32 AND BUILD_SHARED_LIBS)
     target_compile_definitions(ZLIB PUBLIC ZLIB_DLL)
-endif()
-
-if(ZLIB_ENABLE_LFS)
-    target_compile_definitions(ZLIB PUBLIC
-        _LARGEFILE64_SOURCE
-        _FILE_OFFSET_BITS=64
-    )
 endif()
 
 # Install zlib
