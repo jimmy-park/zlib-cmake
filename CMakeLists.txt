@@ -175,50 +175,56 @@ endif()
 if(ZLIB_TEST AND NOT CMAKE_CROSSCOMPILING)
     include(CTest)
 
-    add_executable(example ${zlib_SOURCE_DIR}/test/example.c)
-    target_link_libraries(example PRIVATE ZLIB::ZLIB)
-    add_test(
-        NAME test_example
-        COMMAND example
-    )
+    set(ZLIB_TEST_FILES example minigzip)
 
-    add_executable(infcover ${zlib_SOURCE_DIR}/test/infcover.c)
-    target_link_libraries(infcover PRIVATE ZLIB::ZLIB)
-    add_test(
-        NAME test_infcover
-        COMMAND infcover
-    )
+    foreach(file IN LISTS ZLIB_TEST_FILES)
+        add_executable(${file} ${zlib_SOURCE_DIR}/test/${file}.c)
+        target_link_libraries(${file} PRIVATE ZLIB::ZLIB)
 
-    add_executable(minigzip ${zlib_SOURCE_DIR}/test/minigzip.c)
-    target_link_libraries(minigzip PRIVATE ZLIB::ZLIB)
-    file(
-        GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/test_minigzip.cmake
-        CONTENT
-        "execute_process(
-            COMMAND cmake -E echo hello world
-            COMMAND $<TARGET_FILE:minigzip>
-            COMMAND $<TARGET_FILE:minigzip> -d
-            COMMAND_ERROR_IS_FATAL ANY
-        )"
-    )
-    add_test(
-        NAME test_minigzip
-        COMMAND cmake -P ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/test_minigzip.cmake
-        COMMAND_EXPAND_LISTS
-    )
+        add_executable(${file}64 ${zlib_SOURCE_DIR}/test/${file}.c)
+        target_link_libraries(${file}64 PRIVATE ZLIB::ZLIB)
+        target_compile_definitions(${file}64 PRIVATE _FILE_OFFSET_BITS=64)
 
-    if(WIN32 AND BUILD_SHARED_LIBS)
-        add_custom_command(
-            TARGET minigzip POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:minigzip> $<TARGET_FILE_DIR:minigzip>
-            COMMAND_EXPAND_LISTS
-        )
-    endif()
+        list(APPEND ZLIB_TEST_TARGETS ${file} ${file}64)
+    endforeach()
 
-    if(MSVC)
-        cmake_path(GET CMAKE_C_COMPILER PARENT_PATH VS_PATH)
-        set_tests_properties(test_example test_infcover test_minigzip
-            PROPERTIES ENVIRONMENT PATH=${VS_PATH}
-        )
-    endif()
+    foreach(target IN LISTS ZLIB_TEST_TARGETS)
+        if(target MATCHES "minigzip")
+            file(
+                GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/test_${target}.cmake
+                CONTENT
+                "execute_process(
+                    COMMAND cmake -E echo hello world
+                    COMMAND $<TARGET_FILE:${target}>
+                    COMMAND $<TARGET_FILE:${target}> -d
+                    COMMAND_ERROR_IS_FATAL ANY
+                )"
+            )
+            add_test(
+                NAME test_${target}
+                COMMAND cmake -P ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/test_${target}.cmake
+                COMMAND_EXPAND_LISTS
+            )
+        else()
+            add_test(
+                NAME test_${target}
+                COMMAND ${target}
+            )
+        endif()
+
+        if(WIN32 AND BUILD_SHARED_LIBS)
+            add_custom_command(
+                TARGET ${target} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${target}> $<TARGET_FILE_DIR:${target}>
+                COMMAND_EXPAND_LISTS
+            )
+        endif()
+
+        if(MSVC)
+            cmake_path(GET CMAKE_C_COMPILER PARENT_PATH VS_PATH)
+            set_tests_properties(test_${target}
+                PROPERTIES ENVIRONMENT PATH=${VS_PATH}
+            )
+        endif()
+    endforeach()
 endif()
