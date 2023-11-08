@@ -165,7 +165,42 @@ jobs:
 
       - name: Configure
         run: >
-          cmake -B Build -G "MinGW Makefiles"
+          cmake -B build -G "MinGW Makefiles"
+          -DCMAKE_BUILD_TYPE=${{ matrix.config }}
+          -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
+          -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
+          -DZLIB_INSTALL=ON
+          -DZLIB_TEST=ON
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test
+        working-directory: build
+        run: ctest -V -C ${{ matrix.config }}
+
+      - name: Install
+        run: cmake --install build
+
+  build-cygwin:
+    name: cygwin-${{ matrix.config }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [Debug, Release]
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: C:\cygwin\bin\bash.exe --noprofile --norc -o igncr -eo pipefail '{0}'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cygwin/cygwin-install-action@v4
+        with:
+          packages: cmake gcc-core ninja
+
+      - name: Configure
+        run: >
+          cmake -B build -G Ninja
           -DCMAKE_BUILD_TYPE=${{ matrix.config }}
           -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
           -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
