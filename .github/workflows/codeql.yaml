@@ -2,28 +2,18 @@ name: CodeQL
 
 on:
   push:
-  pull_request:
   schedule:
     - cron: "0 0 * * 0"
 
 jobs:
   analyze:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos, ubuntu, windows]
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
       security-events: write
     steps:
       - uses: actions/checkout@v4
-
-      - name: Configure CMake on Windows
-        if: runner.os == 'Windows'
-        run: cmake --preset windows
-
       - uses: github/codeql-action/init@v3
         with:
           languages: c
