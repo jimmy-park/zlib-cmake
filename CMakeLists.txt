@@ -50,7 +50,7 @@ FetchContent_MakeAvailable(ZLIB)
 
 # Result variables of FindZLIB module
 set(ZLIB_INCLUDE_DIRS ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR} CACHE STRING "Override FindZLIB variables" FORCE)
-set(ZLIB_LIBRARIES "" CACHE STRING "Override FindZLIB variables" FORCE)
+set(ZLIB_LIBRARIES "$<TARGET_LINKER_FILE:ZLIB::ZLIB>" CACHE STRING "Override FindZLIB variables" FORCE)
 set(ZLIB_FOUND ON CACHE BOOL "Override FindZLIB variables" FORCE)
 set(ZLIB_VERSION ${PROJECT_VERSION} CACHE STRING "Override FindZLIB variables" FORCE)
 
