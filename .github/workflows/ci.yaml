@@ -60,6 +60,7 @@ jobs:
           -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO
           -DCPM_SOURCE_CACHE="${{ env.cpm-path }}"
           -DZLIB_SANITIZE=${{ matrix.sanitize }}
+          -DZLIB_VERBOSE=ON
 
       - name: Build
         run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }}
@@ -99,6 +100,7 @@ jobs:
         run: >
           cmake --preset ${{ matrix.preset }}
           -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
+          -DZLIB_VERBOSE=ON
 
       - name: Build
         run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }}
@@ -146,7 +148,8 @@ jobs:
               -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install \
               -DCPM_SOURCE_CACHE=${{ env.cpm-path }}                 \
               -DZLIB_INSTALL=ON                                      \
-              -DZLIB_TEST=ON
+              -DZLIB_TEST=ON                                         \
+              -DZLIB_VERBOSE=ON
             cmake --build build
             cd build
             ctest -V -C ${{ matrix.config }}
@@ -188,6 +191,7 @@ jobs:
           -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
           -DZLIB_INSTALL=ON
           -DZLIB_TEST=ON
+          -DZLIB_VERBOSE=ON
 
       - name: Build
         run: cmake --build build
@@ -223,6 +227,7 @@ jobs:
           -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
           -DZLIB_INSTALL=ON
           -DZLIB_TEST=ON
+          -DZLIB_VERBOSE=ON
 
       - name: Build
         run: cmake --build build

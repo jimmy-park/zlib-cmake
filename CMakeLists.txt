@@ -16,6 +16,7 @@ include(cmake/UseSanitizer.cmake)
 # Custom options
 option(ZLIB_INSTALL "Install zlib and CMake targets" OFF)
 option(ZLIB_TEST "Enable testing and build tests" OFF)
+option(ZLIB_VERBOSE "Print result variables of FindZLIB module" OFF)
 
 if(DEFINED ZLIB_USE_STATIC_LIBS)
     if(ZLIB_USE_STATIC_LIBS AND BUILD_SHARED_LIBS)
@@ -53,6 +54,13 @@ set(ZLIB_INCLUDE_DIRS ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR} CACHE STRING "Overri
 set(ZLIB_LIBRARIES "$<TARGET_LINKER_FILE:ZLIB::ZLIB>" CACHE STRING "Override FindZLIB variables" FORCE)
 set(ZLIB_FOUND ON CACHE BOOL "Override FindZLIB variables" FORCE)
 set(ZLIB_VERSION ${PROJECT_VERSION} CACHE STRING "Override FindZLIB variables" FORCE)
+
+if(ZLIB_VERBOSE)
+    message(STATUS "ZLIB_INCLUDE_DIRS : ${ZLIB_INCLUDE_DIRS}")
+    message(STATUS "ZLIB_LIBRARIES    : ${ZLIB_LIBRARIES}")
+    message(STATUS "ZLIB_FOUND        : ${ZLIB_FOUND}")
+    message(STATUS "ZLIB_VERSION      : ${ZLIB_VERSION}")
+endif()
 
 # Legacy variables of FindZLIB module
 set(ZLIB_VERSION_STRING ${ZLIB_VERSION} CACHE STRING "Override FindZLIB variables" FORCE)
