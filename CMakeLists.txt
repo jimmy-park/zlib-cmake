@@ -8,6 +8,10 @@ project(
     LANGUAGES C
 )
 
+if(NOT PROJECT_IS_TOP_LEVEL)
+    list(APPEND CMAKE_MESSAGE_INDENT "[${PROJECT_NAME}] ")
+endif()
+
 include(FetchContent)
 include(cmake/CheckZLIBConfig.cmake)
 include(cmake/GetCPM.cmake)
