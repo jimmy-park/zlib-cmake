@@ -105,17 +105,15 @@ jobs:
         preset: [freebsd, netbsd, openbsd]
         arch: [arm64, x86_64]
         config: [Debug, Release]
-        exclude:
-          - { preset: netbsd, arch: arm64 }
         include:
           - preset: freebsd
             version: "14.0"
             install: sudo pkg install -y cmake ninja
           - preset: netbsd
-            version: "9.3"
+            version: "10.0"
             install: sudo pkgin -y install cmake ninja-build gcc13
           - preset: openbsd
-            version: "7.4"
+            version: "7.5"
             install: sudo pkg_add cmake ninja
     runs-on: ubuntu-latest
     steps:
