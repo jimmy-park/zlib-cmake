@@ -208,7 +208,7 @@ if(ZLIB_TEST AND NOT CMAKE_CROSSCOMPILING)
                 GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/test_${target}.cmake
                 CONTENT
                 "execute_process(
-                    COMMAND cmake -E echo hello world
+                    COMMAND \${CMAKE_COMMAND} -E echo hello world
                     COMMAND $<TARGET_FILE:${target}>
                     COMMAND $<TARGET_FILE:${target}> -d
                     COMMAND_ERROR_IS_FATAL ANY
@@ -216,7 +216,7 @@ if(ZLIB_TEST AND NOT CMAKE_CROSSCOMPILING)
             )
             add_test(
                 NAME test_${target}
-                COMMAND cmake -P ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/test_${target}.cmake
+                COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/test_${target}.cmake
                 COMMAND_EXPAND_LISTS
             )
         else()
