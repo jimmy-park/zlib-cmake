@@ -31,12 +31,18 @@ if(DEFINED ZLIB_USE_STATIC_LIBS)
 endif()
 
 # Download zlib source
-CPMAddPackage(
+set(CPM_OPTIONS
     NAME zlib-source
     DOWNLOAD_ONLY ON
     URL https://github.com/madler/zlib/archive/v${PROJECT_VERSION}.tar.gz
     URL_HASH SHA256=17e88863f3600672ab49182f217281b6fc4d3c762bde361935e436a95214d05c
 )
+
+if(NOT ZLIB_VERBOSE)
+    list(APPEND CPM_OPTIONS QUIET)
+endif()
+
+CPMAddPackage(${CPM_OPTIONS})
 
 # Modify zlib source
 file(REMOVE ${zlib-source_SOURCE_DIR}/CMakeLists.txt)

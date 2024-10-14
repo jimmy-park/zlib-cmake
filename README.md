@@ -7,10 +7,11 @@ Build [zlib](https://github.com/madler/zlib) using modern CMake and override the
 
 ## CMake Options
 
-| Option         | Default | Description                    |
-| -------------- | ------- | ------------------------------ |
-| `ZLIB_INSTALL` | `OFF`   | Install zlib and CMake targets |
-| `ZLIB_TEST`    | `OFF`   | Enable testing and build tests |
+| Option         | Default | Description                                 |
+| -------------- | ------- | ------------------------------------------- |
+| `ZLIB_INSTALL` | `OFF`   | Install zlib and CMake targets              |
+| `ZLIB_TEST`    | `OFF`   | Enable testing and build tests              |
+| `ZLIB_VERBOSE` | `OFF`   | Print result variables of `FindZLIB` module |
 
 - `CPM_SOURCE_CACHE`
   - Set to `/path/to/cache` to reuse downloaded source code
@@ -37,7 +38,7 @@ set(ZLIB_TEST ON)
 
 FetchContent_Declare(
     zlib-cmake
-    URL https://github.com/jimmy-park/zlib-cmake/archive/main.zip
+    URL https://github.com/jimmy-park/zlib-cmake/archive/main.tar.gz
 )
 
 # This line must be preceded before find_package(ZLIB)
