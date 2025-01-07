@@ -107,13 +107,13 @@ jobs:
         config: [Debug, Release]
         include:
           - preset: freebsd
-            version: "14.0"
+            version: "14.2"
             install: sudo pkg install -y cmake ninja
           - preset: netbsd
             version: "10.0"
             install: sudo pkgin -y install cmake ninja-build gcc13
           - preset: openbsd
-            version: "7.5"
+            version: "7.6"
             install: sudo pkg_add cmake ninja
     runs-on: ubuntu-latest
     steps:
@@ -148,7 +148,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        preset: [UCRT64, CLANG64, CLANG32, MINGW64, MINGW32]
+        preset: [CLANG64, MINGW32, MINGW64, UCRT64]
         config: [Debug, Release]
     runs-on: windows-latest
     defaults:
@@ -202,7 +202,7 @@ jobs:
         shell: C:\cygwin\bin\bash.exe --noprofile --norc -o igncr -eo pipefail '{0}'
     steps:
       - uses: actions/checkout@v4
-      - uses: cygwin/cygwin-install-action@v4
+      - uses: cygwin/cygwin-install-action@v5
         with:
           packages: cmake gcc-core ninja
 
