@@ -30,7 +30,7 @@ jobs:
           - { preset: windows, os: windows-latest }
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/cache@v4
         with:
           path: ${{ env.cpm-path }}
@@ -72,7 +72,7 @@ jobs:
           - { preset: ios, os: macos-latest }
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/cache@v4
         with:
           path: ${{ env.cpm-path }}
@@ -117,7 +117,7 @@ jobs:
             install: sudo pkg_add cmake ninja
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/cache@v4
         with:
           path: ${{ env.cpm-path }}
@@ -155,7 +155,7 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/cache@v4
         with:
           path: ${{ env.cpm-path }}
@@ -201,7 +201,7 @@ jobs:
       run:
         shell: C:\cygwin\bin\bash.exe --noprofile --norc -o igncr -eo pipefail '{0}'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: cygwin/cygwin-install-action@v6
         with:
           packages: cmake gcc-core ninja
