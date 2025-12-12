@@ -31,7 +31,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: ${{ env.cpm-path }}
           key: ${{ env.cpm-key }}
@@ -73,7 +73,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: ${{ env.cpm-path }}
           key: ${{ env.cpm-key }}
@@ -118,7 +118,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: ${{ env.cpm-path }}
           key: ${{ env.cpm-key }}
@@ -156,7 +156,7 @@ jobs:
         shell: msys2 {0}
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: ${{ env.cpm-path }}
           key: ${{ env.cpm-key }}
