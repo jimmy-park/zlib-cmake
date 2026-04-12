@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.25)
 
 project(
     zlib-cmake
-    VERSION 1.3.1
+    VERSION 1.3.2
     DESCRIPTION "Build zlib using modern CMake"
     HOMEPAGE_URL "https://github.com/jimmy-park/zlib-cmake"
     LANGUAGES C
@@ -35,7 +35,7 @@ set(CPM_OPTIONS
     NAME zlib-source
     DOWNLOAD_ONLY ON
     URL https://github.com/madler/zlib/archive/v${PROJECT_VERSION}.tar.gz
-    URL_HASH SHA256=17e88863f3600672ab49182f217281b6fc4d3c762bde361935e436a95214d05c
+    URL_HASH SHA256=b99a0b86c0ba9360ec7e78c4f1e43b1cbdf1e6936c8fa0f6835c0cd694a495a1
 )
 
 if(NOT ZLIB_VERBOSE)
