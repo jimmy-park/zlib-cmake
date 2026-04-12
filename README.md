@@ -7,13 +7,16 @@ Build [zlib](https://github.com/madler/zlib) using modern CMake and override the
 
 ## CMake Options
 
-| Option         | Default | Description                                 |
-| -------------- | ------- | ------------------------------------------- |
-| `ZLIB_INSTALL` | `OFF`   | Install zlib and CMake targets              |
-| `ZLIB_TEST`    | `OFF`   | Enable testing and build tests              |
+| Option         | Default       | Description                                 |
+| -------------- | ------------- | ------------------------------------------- |
+| `ZLIB_INSTALL` | `OFF`         | Install zlib and CMake targets              |
+| `ZLIB_PATCH`   | `(undefined)` | Apply patch files to downloaded zlib source |
+| `ZLIB_TEST`    | `OFF`         | Enable testing and build tests              |
 
-- `CPM_SOURCE_CACHE`
-  - Set to `/path/to/cache` to reuse downloaded source code
+- `ZLIB_PATCH`
+  - Use a semicolon-separated list of patch files
+  - Relative paths are resolved from the top-level project source directory
+  - Patch files should use `LF` line endings
 
 ## Usage
 

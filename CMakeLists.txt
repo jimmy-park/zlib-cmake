@@ -25,7 +25,7 @@ if(DEFINED ZLIB_USE_STATIC_LIBS)
     endif()
 endif()
 
-# Download zlib source
+# Fetch zlib source
 CPMAddPackage(
     NAME zlib-source
     DOWNLOAD_ONLY ON
@@ -33,17 +33,31 @@ CPMAddPackage(
     URL_HASH SHA256=b99a0b86c0ba9360ec7e78c4f1e43b1cbdf1e6936c8fa0f6835c0cd694a495a1
 )
 
-# Modify zlib source
-file(REMOVE ${zlib-source_SOURCE_DIR}/CMakeLists.txt)
-file(READ ${zlib-source_SOURCE_DIR}/zutil.c ZUTIL)
-string(REPLACE "malloc(items * size)" "malloc((size_t) items * size)" ZUTIL "${ZUTIL}")
-file(WRITE ${zlib-source_SOURCE_DIR}/zutil.c "${ZUTIL}")
+# Apply patches
+foreach(patch IN LISTS ZLIB_PATCH)
+    message(VERBOSE "Applying patch: ${patch}")
+
+    if(EXISTS "${patch}" AND NOT IS_DIRECTORY "${patch}")
+        if(NOT IS_ABSOLUTE "${patch}")
+            string(PREPEND patch ${CMAKE_SOURCE_DIR}/)
+        endif()
+
+        execute_process(
+            COMMAND git init
+            COMMAND git apply ${patch}
+            WORKING_DIRECTORY ${zlib-source_SOURCE_DIR}
+            OUTPUT_QUIET
+            ERROR_QUIET
+        )
+    endif()
+endforeach()
 
 # Override find_package(ZLIB)
 FetchContent_Declare(
     ZLIB
     SOURCE_DIR ${zlib-source_SOURCE_DIR}
     BINARY_DIR ${zlib-source_BINARY_DIR}
+    SOURCE_SUBDIR do-not-add-subdirectory
     OVERRIDE_FIND_PACKAGE
 )
 FetchContent_MakeAvailable(ZLIB)
