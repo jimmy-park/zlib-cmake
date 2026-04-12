@@ -11,7 +11,6 @@ Build [zlib](https://github.com/madler/zlib) using modern CMake and override the
 | -------------- | ------- | ------------------------------------------- |
 | `ZLIB_INSTALL` | `OFF`   | Install zlib and CMake targets              |
 | `ZLIB_TEST`    | `OFF`   | Enable testing and build tests              |
-| `ZLIB_VERBOSE` | `OFF`   | Print result variables of `FindZLIB` module |
 
 - `CPM_SOURCE_CACHE`
   - Set to `/path/to/cache` to reuse downloaded source code

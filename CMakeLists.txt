@@ -8,10 +8,6 @@ project(
     LANGUAGES C
 )
 
-if(NOT PROJECT_IS_TOP_LEVEL)
-    list(APPEND CMAKE_MESSAGE_INDENT "[${PROJECT_NAME}] ")
-endif()
-
 include(FetchContent)
 include(cmake/CheckZLIBConfig.cmake)
 include(cmake/GetCPM.cmake)
@@ -20,7 +16,6 @@ include(cmake/UseSanitizer.cmake)
 # Custom options
 option(ZLIB_INSTALL "Install zlib and CMake targets" OFF)
 option(ZLIB_TEST "Enable testing and build tests" OFF)
-option(ZLIB_VERBOSE "Print result variables of FindZLIB module" OFF)
 
 if(DEFINED ZLIB_USE_STATIC_LIBS)
     if(ZLIB_USE_STATIC_LIBS AND BUILD_SHARED_LIBS)
@@ -31,18 +26,12 @@ if(DEFINED ZLIB_USE_STATIC_LIBS)
 endif()
 
 # Download zlib source
-set(CPM_OPTIONS
+CPMAddPackage(
     NAME zlib-source
     DOWNLOAD_ONLY ON
     URL https://github.com/madler/zlib/archive/v${PROJECT_VERSION}.tar.gz
     URL_HASH SHA256=b99a0b86c0ba9360ec7e78c4f1e43b1cbdf1e6936c8fa0f6835c0cd694a495a1
 )
-
-if(NOT ZLIB_VERBOSE)
-    list(APPEND CPM_OPTIONS QUIET)
-endif()
-
-CPMAddPackage(${CPM_OPTIONS})
 
 # Modify zlib source
 file(REMOVE ${zlib-source_SOURCE_DIR}/CMakeLists.txt)
@@ -60,17 +49,18 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(ZLIB)
 
 # Result variables of FindZLIB module
-set(ZLIB_INCLUDE_DIRS ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR} CACHE STRING "Override FindZLIB variables" FORCE)
-set(ZLIB_LIBRARIES "$<TARGET_LINKER_FILE:ZLIB::ZLIB>" CACHE STRING "Override FindZLIB variables" FORCE)
 set(ZLIB_FOUND ON CACHE BOOL "Override FindZLIB variables" FORCE)
 set(ZLIB_VERSION ${PROJECT_VERSION} CACHE STRING "Override FindZLIB variables" FORCE)
+set(ZLIB_INCLUDE_DIRS ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR} CACHE STRING "Override FindZLIB variables" FORCE)
+set(ZLIB_LIBRARIES "$<TARGET_LINKER_FILE:ZLIB::ZLIB>" CACHE STRING "Override FindZLIB variables" FORCE)
 
-if(ZLIB_VERBOSE)
-    message(STATUS "ZLIB_INCLUDE_DIRS : ${ZLIB_INCLUDE_DIRS}")
-    message(STATUS "ZLIB_LIBRARIES    : ${ZLIB_LIBRARIES}")
-    message(STATUS "ZLIB_FOUND        : ${ZLIB_FOUND}")
-    message(STATUS "ZLIB_VERSION      : ${ZLIB_VERSION}")
-endif()
+message(VERBOSE "Resolved ZLIB variables")
+list(APPEND CMAKE_MESSAGE_INDENT "  ")
+message(VERBOSE "ZLIB_FOUND        : ${ZLIB_FOUND}")
+message(VERBOSE "ZLIB_VERSION      : ${ZLIB_VERSION}")
+message(VERBOSE "ZLIB_INCLUDE_DIRS : ${ZLIB_INCLUDE_DIRS}")
+message(VERBOSE "ZLIB_LIBRARIES    : ${ZLIB_LIBRARIES}")
+list(POP_BACK CMAKE_MESSAGE_INDENT)
 
 # Legacy variables of FindZLIB module
 set(ZLIB_VERSION_STRING ${ZLIB_VERSION} CACHE STRING "Override FindZLIB variables" FORCE)

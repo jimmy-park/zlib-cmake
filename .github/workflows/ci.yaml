@@ -1,6 +1,9 @@
 name: CI
 
-on: push
+on:
+  push:
+    branches: [main]
+  pull_request:
 
 env:
   cpm-path: .cpm
@@ -45,11 +48,10 @@ jobs:
 
       - name: Configure
         run: >
-          cmake --preset ${{ matrix.preset }}
+          cmake --log-level=VERBOSE --preset ${{ matrix.preset }}
           -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO
           -DCPM_SOURCE_CACHE="${{ env.cpm-path }}"
           -DZLIB_SANITIZE=${{ matrix.sanitize }}
-          -DZLIB_VERBOSE=ON
 
       - name: Build
         run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }}
@@ -87,9 +89,8 @@ jobs:
 
       - name: Configure
         run: >
-          cmake --preset ${{ matrix.preset }}
+          cmake --log-level=VERBOSE --preset ${{ matrix.preset }}
           -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
-          -DZLIB_VERBOSE=ON
 
       - name: Build
         run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }}
@@ -107,13 +108,13 @@ jobs:
         config: [Debug, Release]
         include:
           - preset: freebsd
-            version: "14.2"
+            version: "15.0"
             install: sudo pkg install -y cmake ninja
           - preset: netbsd
-            version: "10.0"
+            version: "10.1"
             install: sudo pkgin -y install cmake ninja-build gcc13
           - preset: openbsd
-            version: "7.6"
+            version: "7.8"
             install: sudo pkg_add cmake ninja
     runs-on: ubuntu-latest
     steps:
@@ -123,7 +124,7 @@ jobs:
           path: ${{ env.cpm-path }}
           key: ${{ env.cpm-key }}
           enableCrossOsArchive: true
-      - uses: cross-platform-actions/action@master
+      - uses: cross-platform-actions/action@v1.0.0
         with:
           operating_system: ${{ matrix.preset }}
           architecture: ${{ matrix.arch }}
@@ -131,12 +132,12 @@ jobs:
           run: |
             ${{ matrix.install }}
             cmake -B build -G Ninja                                  \
+              --log-level=VERBOSE                                    \
               -DCMAKE_BUILD_TYPE=${{ matrix.config }}                \
               -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install \
               -DCPM_SOURCE_CACHE=${{ env.cpm-path }}                 \
               -DZLIB_INSTALL=ON                                      \
-              -DZLIB_TEST=ON                                         \
-              -DZLIB_VERBOSE=ON
+              -DZLIB_TEST=ON
             cmake --build build
             cd build
             ctest -V -C ${{ matrix.config }}
@@ -172,13 +173,12 @@ jobs:
 
       - name: Configure
         run: >
-          cmake -B build -G Ninja
+          cmake --log-level=VERBOSE -B build -G Ninja
           -DCMAKE_BUILD_TYPE=${{ matrix.config }}
           -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
           -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
           -DZLIB_INSTALL=ON
           -DZLIB_TEST=ON
-          -DZLIB_VERBOSE=ON
 
       - name: Build
         run: cmake --build build
@@ -208,13 +208,12 @@ jobs:
 
       - name: Configure
         run: >
-          cmake -B build -G Ninja
+          cmake --log-level=VERBOSE -B build -G Ninja
           -DCMAKE_BUILD_TYPE=${{ matrix.config }}
           -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
           -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
           -DZLIB_INSTALL=ON
           -DZLIB_TEST=ON
-          -DZLIB_VERBOSE=ON
 
       - name: Build
         run: cmake --build build
