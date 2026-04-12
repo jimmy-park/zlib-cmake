@@ -2,15 +2,11 @@ cmake_minimum_required(VERSION 3.25)
 
 project(
     zlib-cmake
-    VERSION 1.3.1
+    VERSION 1.3.2
     DESCRIPTION "Build zlib using modern CMake"
     HOMEPAGE_URL "https://github.com/jimmy-park/zlib-cmake"
     LANGUAGES C
 )
-
-if(NOT PROJECT_IS_TOP_LEVEL)
-    list(APPEND CMAKE_MESSAGE_INDENT "[${PROJECT_NAME}] ")
-endif()
 
 include(FetchContent)
 include(cmake/CheckZLIBConfig.cmake)
@@ -20,7 +16,6 @@ include(cmake/UseSanitizer.cmake)
 # Custom options
 option(ZLIB_INSTALL "Install zlib and CMake targets" OFF)
 option(ZLIB_TEST "Enable testing and build tests" OFF)
-option(ZLIB_VERBOSE "Print result variables of FindZLIB module" OFF)
 
 if(DEFINED ZLIB_USE_STATIC_LIBS)
     if(ZLIB_USE_STATIC_LIBS AND BUILD_SHARED_LIBS)
@@ -30,47 +25,56 @@ if(DEFINED ZLIB_USE_STATIC_LIBS)
     endif()
 endif()
 
-# Download zlib source
-set(CPM_OPTIONS
+# Fetch zlib source
+CPMAddPackage(
     NAME zlib-source
     DOWNLOAD_ONLY ON
     URL https://github.com/madler/zlib/archive/v${PROJECT_VERSION}.tar.gz
-    URL_HASH SHA256=17e88863f3600672ab49182f217281b6fc4d3c762bde361935e436a95214d05c
+    URL_HASH SHA256=b99a0b86c0ba9360ec7e78c4f1e43b1cbdf1e6936c8fa0f6835c0cd694a495a1
 )
 
-if(NOT ZLIB_VERBOSE)
-    list(APPEND CPM_OPTIONS QUIET)
-endif()
+# Apply patches
+foreach(patch IN LISTS ZLIB_PATCH)
+    message(VERBOSE "Applying patch: ${patch}")
 
-CPMAddPackage(${CPM_OPTIONS})
+    if(EXISTS "${patch}" AND NOT IS_DIRECTORY "${patch}")
+        if(NOT IS_ABSOLUTE "${patch}")
+            string(PREPEND patch ${CMAKE_SOURCE_DIR}/)
+        endif()
 
-# Modify zlib source
-file(REMOVE ${zlib-source_SOURCE_DIR}/CMakeLists.txt)
-file(READ ${zlib-source_SOURCE_DIR}/zutil.c ZUTIL)
-string(REPLACE "malloc(items * size)" "malloc((size_t) items * size)" ZUTIL "${ZUTIL}")
-file(WRITE ${zlib-source_SOURCE_DIR}/zutil.c "${ZUTIL}")
+        execute_process(
+            COMMAND git init
+            COMMAND git apply ${patch}
+            WORKING_DIRECTORY ${zlib-source_SOURCE_DIR}
+            OUTPUT_QUIET
+            ERROR_QUIET
+        )
+    endif()
+endforeach()
 
 # Override find_package(ZLIB)
 FetchContent_Declare(
     ZLIB
     SOURCE_DIR ${zlib-source_SOURCE_DIR}
     BINARY_DIR ${zlib-source_BINARY_DIR}
+    SOURCE_SUBDIR do-not-add-subdirectory
     OVERRIDE_FIND_PACKAGE
 )
 FetchContent_MakeAvailable(ZLIB)
 
 # Result variables of FindZLIB module
-set(ZLIB_INCLUDE_DIRS ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR} CACHE STRING "Override FindZLIB variables" FORCE)
-set(ZLIB_LIBRARIES "$<TARGET_LINKER_FILE:ZLIB::ZLIB>" CACHE STRING "Override FindZLIB variables" FORCE)
 set(ZLIB_FOUND ON CACHE BOOL "Override FindZLIB variables" FORCE)
 set(ZLIB_VERSION ${PROJECT_VERSION} CACHE STRING "Override FindZLIB variables" FORCE)
+set(ZLIB_INCLUDE_DIRS ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR} CACHE STRING "Override FindZLIB variables" FORCE)
+set(ZLIB_LIBRARIES "$<TARGET_LINKER_FILE:ZLIB::ZLIB>" CACHE STRING "Override FindZLIB variables" FORCE)
 
-if(ZLIB_VERBOSE)
-    message(STATUS "ZLIB_INCLUDE_DIRS : ${ZLIB_INCLUDE_DIRS}")
-    message(STATUS "ZLIB_LIBRARIES    : ${ZLIB_LIBRARIES}")
-    message(STATUS "ZLIB_FOUND        : ${ZLIB_FOUND}")
-    message(STATUS "ZLIB_VERSION      : ${ZLIB_VERSION}")
-endif()
+message(VERBOSE "Resolved ZLIB variables")
+list(APPEND CMAKE_MESSAGE_INDENT "  ")
+message(VERBOSE "ZLIB_FOUND        : ${ZLIB_FOUND}")
+message(VERBOSE "ZLIB_VERSION      : ${ZLIB_VERSION}")
+message(VERBOSE "ZLIB_INCLUDE_DIRS : ${ZLIB_INCLUDE_DIRS}")
+message(VERBOSE "ZLIB_LIBRARIES    : ${ZLIB_LIBRARIES}")
+list(POP_BACK CMAKE_MESSAGE_INDENT)
 
 # Legacy variables of FindZLIB module
 set(ZLIB_VERSION_STRING ${ZLIB_VERSION} CACHE STRING "Override FindZLIB variables" FORCE)
