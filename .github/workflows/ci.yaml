@@ -86,24 +86,13 @@ jobs:
       - name: Install
         run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }} -t install
 
-  build-bsd:
-    name: ${{ matrix.preset }}-${{ matrix.arch }}-${{ matrix.config }}
+  build-freebsd:
+    name: freebsd-${{ matrix.arch }}-${{ matrix.config }}
     strategy:
       fail-fast: false
       matrix:
-        preset: [ freebsd, netbsd, openbsd ]
         arch: [ arm64, x86_64 ]
         config: [ Debug, Release ]
-        include:
-          - preset: freebsd
-            version: "15.0"
-            install: sudo pkg install -y cmake ninja
-          - preset: netbsd
-            version: "10.1"
-            install: sudo pkgin -y install cmake ninja-build gcc13
-          - preset: openbsd
-            version: "7.8"
-            install: sudo pkg_add cmake ninja
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -114,11 +103,11 @@ jobs:
           enableCrossOsArchive: true
       - uses: cross-platform-actions/action@v1.0.0
         with:
-          operating_system: ${{ matrix.preset }}
+          operating_system: freebsd
           architecture: ${{ matrix.arch }}
-          version: ${{ matrix.version }}
+          version: "15.0"
           run: |
-            ${{ matrix.install }}
+            sudo pkg install -y cmake ninja
             cmake -B build -G Ninja                                  \
               --log-level=VERBOSE                                    \
               -DCMAKE_BUILD_TYPE=${{ matrix.config }}                \
