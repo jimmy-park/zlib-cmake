@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
 
 env:
@@ -15,9 +15,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        preset: [linux-clang, linux-gcc, macos, windows]
-        config: [Debug, Release]
-        sanitize: [address, thread, undefined, leak, memory]
+        preset: [ linux-clang, linux-gcc, macos, windows ]
+        config: [ Debug, Release ]
+        sanitize: [ address, thread, undefined, leak, memory ]
         exclude:
           - { preset: linux-gcc, sanitize: memory }
           - { preset: macos, sanitize: leak }
@@ -61,8 +61,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        preset: [android, ios]
-        config: [Debug, Release]
+        preset: [ android, ios ]
+        config: [ Debug, Release ]
         include:
           - { preset: android, os: ubuntu-latest }
           - { preset: ios, os: macos-latest }
@@ -91,9 +91,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        preset: [freebsd, netbsd, openbsd]
-        arch: [arm64, x86_64]
-        config: [Debug, Release]
+        preset: [ freebsd, netbsd, openbsd ]
+        arch: [ arm64, x86_64 ]
+        config: [ Debug, Release ]
         include:
           - preset: freebsd
             version: "15.0"
@@ -137,8 +137,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        preset: [CLANG64, MINGW32, MINGW64, UCRT64]
-        config: [Debug, Release]
+        preset: [ CLANG64, MINGW32, MINGW64, UCRT64 ]
+        config: [ Debug, Release ]
     runs-on: windows-latest
     defaults:
       run:
@@ -155,9 +155,7 @@ jobs:
           msystem: ${{ matrix.preset }}
           update: true
           pacboy: >-
-            cmake:p
-            gcc:p
-            ninja:p
+            cmake:p gcc:p ninja:p
 
       - name: Configure
         run: >
@@ -183,7 +181,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: [Debug, Release]
+        config: [ Debug, Release ]
     runs-on: windows-latest
     defaults:
       run:
