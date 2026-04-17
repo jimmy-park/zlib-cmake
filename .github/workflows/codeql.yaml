@@ -20,5 +20,10 @@ jobs:
         with:
           languages: c
           queries: security-extended
-      - uses: github/codeql-action/autobuild@v4
+      - name: Configure
+        run: >
+          cmake --preset linux-gcc
+          -DZLIB_PATCH="patch/0001-zutil-use-size-t.patch;patch/0002-gzlib-fix-past-init.patch"
+      - name: Build
+        run: cmake --build --preset linux-gcc --config Release
       - uses: github/codeql-action/analyze@v4
