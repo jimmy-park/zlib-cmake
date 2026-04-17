@@ -35,21 +35,27 @@ CPMAddPackage(
 
 # Apply patches
 foreach(patch IN LISTS ZLIB_PATCH)
-    message(VERBOSE "Applying patch: ${patch}")
-
-    if(EXISTS "${patch}" AND NOT IS_DIRECTORY "${patch}")
-        if(NOT IS_ABSOLUTE "${patch}")
-            string(PREPEND patch ${CMAKE_SOURCE_DIR}/)
-        endif()
-
-        execute_process(
-            COMMAND git init
-            COMMAND git apply ${patch}
-            WORKING_DIRECTORY ${zlib-source_SOURCE_DIR}
-            OUTPUT_QUIET
-            ERROR_QUIET
-        )
+    if(NOT IS_ABSOLUTE "${patch}")
+        string(PREPEND patch "${CMAKE_SOURCE_DIR}/")
     endif()
+
+    if(NOT EXISTS "${patch}" OR IS_DIRECTORY "${patch}")
+        message(FATAL_ERROR "Patch file not found: ${patch}")
+    endif()
+
+    message(VERBOSE "Applying patch: ${patch}")
+    execute_process(
+        COMMAND git init
+        WORKING_DIRECTORY ${zlib-source_SOURCE_DIR}
+        OUTPUT_QUIET
+        ERROR_QUIET
+    )
+    execute_process(
+        COMMAND git apply ${patch}
+        WORKING_DIRECTORY ${zlib-source_SOURCE_DIR}
+        OUTPUT_QUIET
+        ERROR_QUIET
+    )
 endforeach()
 
 # Override find_package(ZLIB)
