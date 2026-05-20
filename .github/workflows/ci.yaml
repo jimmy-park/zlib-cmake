@@ -101,7 +101,7 @@ jobs:
           path: ${{ env.cpm-path }}
           key: ${{ env.cpm-key }}
           enableCrossOsArchive: true
-      - uses: cross-platform-actions/action@v1.0.0
+      - uses: cross-platform-actions/action@v1.1.0
         with:
           operating_system: freebsd
           architecture: ${{ matrix.arch }}
