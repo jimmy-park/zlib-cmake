@@ -9,7 +9,7 @@
             "inherits": [
                 "host-windows",
                 "target-windows",
-                "vs2022",
+                "vs",
                 "default"
             ]
         },
@@ -28,7 +28,7 @@
             "inherits": [
                 "host-windows",
                 "target-windows-arm",
-                "vs2022",
+                "vs",
                 "default"
             ]
         },
@@ -37,7 +37,7 @@
             "inherits": [
                 "host-windows",
                 "target-windows-arm64",
-                "vs2022",
+                "vs",
                 "default"
             ]
         },
@@ -46,7 +46,7 @@
             "inherits": [
                 "host-windows",
                 "target-windows-x86",
-                "vs2022",
+                "vs",
                 "default"
             ]
         },
@@ -55,7 +55,7 @@
             "inherits": [
                 "host-windows",
                 "target-windows-x86_64",
-                "vs2022",
+                "vs",
                 "default"
             ]
         }
