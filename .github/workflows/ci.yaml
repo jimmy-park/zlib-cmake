@@ -33,7 +33,7 @@ jobs:
           - { preset: windows, os: windows-latest }
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/cache@v6
         with:
           path: ${{ env.cpm-path }}
@@ -68,7 +68,7 @@ jobs:
           - { preset: ios, os: macos-latest }
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/cache@v6
         with:
           path: ${{ env.cpm-path }}
@@ -95,7 +95,7 @@ jobs:
         config: [ Debug, Release ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/cache@v6
         with:
           path: ${{ env.cpm-path }}
@@ -133,7 +133,7 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/cache@v6
         with:
           path: ${{ env.cpm-path }}
@@ -176,7 +176,7 @@ jobs:
       run:
         shell: C:\cygwin\bin\bash.exe --noprofile --norc -o igncr -eo pipefail '{0}'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: cygwin/cygwin-install-action@v6
         with:
           packages: cmake gcc-core ninja
