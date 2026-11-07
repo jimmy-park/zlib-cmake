@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.25)
 
 project(
     zlib-cmake
-    VERSION 1.3.2
+    VERSION 1.4
     DESCRIPTION "Build zlib using modern CMake"
     HOMEPAGE_URL "https://github.com/jimmy-park/zlib-cmake"
     LANGUAGES C
@@ -30,7 +30,7 @@ CPMAddPackage(
     NAME zlib-source
     DOWNLOAD_ONLY ON
     URL https://github.com/madler/zlib/archive/v${PROJECT_VERSION}.tar.gz
-    URL_HASH SHA256=b99a0b86c0ba9360ec7e78c4f1e43b1cbdf1e6936c8fa0f6835c0cd694a495a1
+    URL_HASH SHA256=4331355048e286908260fdbeaa0b8cf75ceaf2907c75855a093a6487c7032aaa
 )
 
 # Apply patches
@@ -87,8 +87,14 @@ set(ZLIB_VERSION_STRING ${ZLIB_VERSION} CACHE STRING "Override FindZLIB variable
 set(VERSION_LEVEL MAJOR MINOR PATCH TWEAK)
 
 foreach(level IN LISTS VERSION_LEVEL)
-    set(ZLIB_VERSION_${level} ${PROJECT_VERSION_${level}} CACHE STRING "Override FindZLIB variables" FORCE)
-    set(ZLIB_${level}_VERSION ${PROJECT_VERSION_${level}} CACHE STRING "Override FindZLIB variables" FORCE)
+    set(value "${PROJECT_VERSION_${level}}")
+
+    if(value STREQUAL "")
+        set(value 0)
+    endif()
+
+    set(ZLIB_VERSION_${level} ${value} CACHE STRING "Override FindZLIB variables" FORCE)
+    set(ZLIB_${level}_VERSION ${value} CACHE STRING "Override FindZLIB variables" FORCE)
 endforeach()
 
 # Create ZLIB target
@@ -132,14 +138,12 @@ target_sources(ZLIB PUBLIC
 )
 set_target_properties(ZLIB PROPERTIES
     OUTPUT_NAME $<IF:$<BOOL:${UNIX}>,z,zlib>
-    WINDOWS_EXPORT_ALL_SYMBOLS ON
     ARCHIVE_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
     COMPILE_PDB_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
     LIBRARY_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
     PDB_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
     RUNTIME_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
     DEBUG_POSTFIX d
-    DEFINE_SYMBOL ZLIB_INTERNAL
     VERSION ${ZLIB_VERSION}
     SOVERSION ${ZLIB_VERSION_MAJOR}
 )
