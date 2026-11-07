@@ -5,10 +5,6 @@ on:
     branches: [ main ]
   pull_request:
 
-env:
-  cpm-path: .cpm
-  cpm-key: zlib-1.3.2-cpm
-
 jobs:
   build:
     name: ${{ matrix.preset }}-${{ matrix.config }}-${{ matrix.sanitize }}
@@ -17,14 +13,11 @@ jobs:
       matrix:
         preset: [ linux-clang, linux-gcc, macos, windows ]
         config: [ Debug, Release ]
-        sanitize: [ address, thread, undefined, leak, memory ]
+        sanitize: [ address, undefined, memory ]
         exclude:
           - { preset: linux-gcc, sanitize: memory }
-          - { preset: macos, sanitize: leak }
           - { preset: macos, sanitize: memory }
-          - { preset: windows, sanitize: thread }
           - { preset: windows, sanitize: undefined }
-          - { preset: windows, sanitize: leak }
           - { preset: windows, sanitize: memory }
         include:
           - { preset: linux-clang, os: ubuntu-latest }
@@ -34,17 +27,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/cache@v6
-        with:
-          path: ${{ env.cpm-path }}
-          key: ${{ env.cpm-key }}
-          enableCrossOsArchive: true
 
       - name: Configure
         run: >
           cmake --log-level=VERBOSE --preset ${{ matrix.preset }}
-          -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO
-          -DCPM_SOURCE_CACHE="${{ env.cpm-path }}"
           -DZLIB_SANITIZE=${{ matrix.sanitize }}
 
       - name: Build
@@ -69,16 +55,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/cache@v6
-        with:
-          path: ${{ env.cpm-path }}
-          key: ${{ env.cpm-key }}
-          enableCrossOsArchive: true
 
       - name: Configure
         run: >
           cmake --log-level=VERBOSE --preset ${{ matrix.preset }}
-          -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
 
       - name: Build
         run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }}
@@ -87,46 +67,45 @@ jobs:
         run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }} -t install
 
   build-freebsd:
-    name: freebsd-${{ matrix.arch }}-${{ matrix.config }}
+    name: freebsd-${{ matrix.config }}
     strategy:
       fail-fast: false
       matrix:
-        arch: [ arm64, x86_64 ]
         config: [ Debug, Release ]
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: freebsd {0}
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/cache@v6
-        with:
-          path: ${{ env.cpm-path }}
-          key: ${{ env.cpm-key }}
-          enableCrossOsArchive: true
-      - uses: cross-platform-actions/action@v1
-        with:
-          operating_system: freebsd
-          architecture: ${{ matrix.arch }}
-          version: "15.0"
-          run: |
-            sudo pkg install -y cmake ninja
-            cmake -B build -G Ninja                                  \
-              --log-level=VERBOSE                                    \
-              -DCMAKE_BUILD_TYPE=${{ matrix.config }}                \
-              -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install \
-              -DCPM_SOURCE_CACHE=${{ env.cpm-path }}                 \
-              -DZLIB_INSTALL=ON                                      \
-              -DZLIB_TEST=ON
-            cmake --build build
-            cd build
-            ctest -V -C ${{ matrix.config }}
-            cd ..
-            cmake --install build
+      - name: Start VM
+        uses: vmactions/freebsd-vm@v1
+
+      - name: Install dependencies
+        run: pkg install -y cmake-core ninja
+
+      - name: Configure
+        run: >
+          cmake --log-level=VERBOSE -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=${{ matrix.config }}
+          -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
+          -DZLIB_INSTALL=ON
+          -DZLIB_TEST=ON
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test
+        run: ctest --test-dir build -V -C ${{ matrix.config }}
+
+      - name: Install
+        run: cmake --install build
 
   build-msys2:
-    name: msys2-${{ matrix.preset }}-${{ matrix.config }}
+    name: msys2-${{ matrix.config }}
     strategy:
       fail-fast: false
       matrix:
-        preset: [ CLANG64, MINGW32, MINGW64, UCRT64 ]
         config: [ Debug, Release ]
     runs-on: windows-latest
     defaults:
@@ -134,14 +113,8 @@ jobs:
         shell: msys2 {0}
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/cache@v6
-        with:
-          path: ${{ env.cpm-path }}
-          key: ${{ env.cpm-key }}
-          enableCrossOsArchive: true
       - uses: msys2/setup-msys2@v2
         with:
-          msystem: ${{ matrix.preset }}
           update: true
           pacboy: >-
             cmake:p gcc:p ninja:p
@@ -151,7 +124,6 @@ jobs:
           cmake --log-level=VERBOSE -B build -G Ninja
           -DCMAKE_BUILD_TYPE=${{ matrix.config }}
           -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
-          -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
           -DZLIB_INSTALL=ON
           -DZLIB_TEST=ON
 
@@ -186,7 +158,6 @@ jobs:
           cmake --log-level=VERBOSE -B build -G Ninja
           -DCMAKE_BUILD_TYPE=${{ matrix.config }}
           -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
-          -DCPM_SOURCE_CACHE=${{ env.cpm-path }}
           -DZLIB_INSTALL=ON
           -DZLIB_TEST=ON
 

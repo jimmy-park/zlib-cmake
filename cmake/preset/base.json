@@ -8,9 +8,7 @@
             "installDir": "${sourceDir}/install/${presetName}",
             "cmakeExecutable": "cmake",
             "cacheVariables": {
-                "CPM_SOURCE_CACHE": "${sourceDir}/build/.cache",
                 "ZLIB_INSTALL": true,
-                "ZLIB_PATCH": "${sourceDir}/patch/0001-zutil-use-size-t.patch;${sourceDir}/patch/0002-gzlib-fix-past-init.patch",
                 "ZLIB_TEST": true
             }
         },
@@ -94,7 +92,10 @@
         {
             "name": "target-ios",
             "hidden": true,
-            "toolchainFile": "${sourceDir}/cmake/toolchain/ios.cmake"
+            "toolchainFile": "${sourceDir}/cmake/toolchain/ios.cmake",
+            "cacheVariables": {
+                "CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED": "NO"
+            }
         },
         {
             "name": "target-ios_sim",
